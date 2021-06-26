@@ -27,6 +27,9 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
 elif [[ $ACTION = "test" ]]; then
     cd ./golang || exit 1
     go test -v
+elif [[ $ACTION = "dependencies" ]]; then
+    cd ./golang || exit 1
+    go mod download
 else
     error_msg "Unknown action"
 fi
