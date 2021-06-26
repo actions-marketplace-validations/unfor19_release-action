@@ -1,15 +1,33 @@
 #!/bin/bash
 source /code/bargs.sh "$@"
-ls -lh
-echo "PWD = $PWD"
-echo "$GITHUB_WORKSPACE"
-echo "$LANG_NAME"
-echo "$LANG_VERSION"
-echo "::set-output name=lang_name::$LANG_NAME"
-echo "::set-output name=lang_version::$LANG_VERSION"
-if [[ -f build.sh ]]; then
-    echo "found build.sh file"
+
+set -e
+set -o pipefail
+
+### Functions
+error_msg(){
+  local msg="$1"
+  local code="${2:-"1"}"
+  echo -e "[ERROR] $(date) :: [CODE=$code] $msg"
+  exit "$code"
+}
+
+
+log_msg(){
+  local msg="$1"
+  echo -e "[LOG] $(date) :: $msg"
+}
+
+
+if [[ $ACTION = "build" && -f build.sh ]]; then
+    log_msg "Found build.sh file"
     bash ./build.sh
+    ls -lh
+elif [[ $ACTION = "test" ]]; then
+    cd ./golang || exit 1
+    go test -v
+elif [[ $ACTION = "dependencies" ]]; then
+    go mod download -json
 else
-    echo "build.sh file not found"
+    error_msg "Unknown action"
 fi

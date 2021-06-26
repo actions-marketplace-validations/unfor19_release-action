@@ -7,6 +7,10 @@ name=lang_version
 short=lv
 description=Language version: 1.16, 12.14, etc.
 ---
+name=action
+short=a
+options=build test publish dependencies
+---
 name=bargs
 description=bash entrypoint.sh --lang_name golang --lang_version 1.16
 default=irrelevant

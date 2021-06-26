@@ -22,14 +22,11 @@ log_msg(){
 if [[ $ACTION = "build" && -f build.sh ]]; then
     log_msg "Found build.sh file"
     bash ./build.sh
-    echo "$GOPATH"
-    log_msg "Executing app"
-    ./golang/app
+    ls -lh
 elif [[ $ACTION = "test" ]]; then
     cd ./golang || exit 1
     go test -v
 elif [[ $ACTION = "dependencies" ]]; then
-    cd ./golang || exit 1
     go mod download -json
 else
     error_msg "Unknown action"
