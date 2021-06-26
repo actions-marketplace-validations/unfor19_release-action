@@ -16,10 +16,7 @@ outputs:
   lang-version:
     description: ""
 runs:
-  using: "docker"
-  image: "Dockerfile"
-  args:
-    - --lang_name
-    - ${{ inputs.lang-name }}
-    - --lang_version
-    - ${{ inputs.lang-version }}
+  using: "composite"
+  steps:
+    - run: docker pull ghcr.io/unfor19/release-action:golang-1.16
+      shell: bash
