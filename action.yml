@@ -1,5 +1,8 @@
-name: test
-description: test docker build
+name: "release-action"
+branding:
+  icon: "align-justify"
+  color: "white"
+description: "Build and Release application in GitHub's ecosystem"
 inputs:
   lang_name:
     description: "golang, node, etc."
