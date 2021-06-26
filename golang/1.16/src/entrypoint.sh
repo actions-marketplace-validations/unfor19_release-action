@@ -21,6 +21,9 @@ log_msg(){
 
 if [[ $ACTION = "build" && -f build.sh ]]; then
     log_msg "Found build.sh file"
+    log_msg "Checking cache dir"
+    ls ~/go/pkg/mod/github.com/
+    log_msg "Executing build.sh script"
     bash ./build.sh
     ls -lh
 elif [[ $ACTION = "test" ]]; then
