@@ -22,16 +22,28 @@ log_msg(){
 if [[ $ACTION = "build" && -f build.sh ]]; then
     log_msg "Found build.sh file"
     log_msg "Checking cache dir"
-    ls /go/pkg/mod/github.com/ || true
+    if [[ -d ".cache-modules" ]]; then
+        log_msg "Cache modules exists!"
+        ln -s ./.cache-modules /go/pkg/mod
+        ls -lh /go/pkg/mod/ || true
+    fi
+    if [[ -d ".cache-go-build" ]]; then
+        log_msg "Cache go-build exists!"
+        ln -s ./.cache-go-build ~/.cache/go-build
+        ls -lh ~/.cache/go-build || true
+    fi
     log_msg "Executing build.sh script"
     bash ./build.sh
     ls -lh
+    log_msg "Caching build ..."
+    mv ~/.cache/go-build ./.cache-go-build
 elif [[ $ACTION = "test" ]]; then
     cd ./golang || exit 1
     go test -v
 elif [[ $ACTION = "dependencies" ]]; then
     log_msg "Getting dependencies ..."
     go mod download -json
+    mv /go/pkg/mod/cache ./.cache-modules
 else
     error_msg "Unknown action"
 fi
