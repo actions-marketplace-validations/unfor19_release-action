@@ -29,7 +29,7 @@ elif [[ $ACTION = "test" ]]; then
     go test -v
 elif [[ $ACTION = "dependencies" ]]; then
     cd ./golang || exit 1
-    go mod download
+    go mod download -json
 else
     error_msg "Unknown action"
 fi
