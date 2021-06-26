@@ -4,22 +4,22 @@ branding:
   color: "white"
 description: "Build and Release application in GitHub's ecosystem"
 inputs:
-  lang_name:
+  lang-name:
     description: "golang, node, etc."
     required: true
-  lang_version:
+  lang-version:
     description: "1.16, 12.14, etc."
     required: true
 outputs:
-  lang_name:
+  lang-name:
     description: ""
-  lang_version:
+  lang-version:
     description: ""
 runs:
   using: "docker"
-  image: format('ghcr.io/unfor19/release-action:{0}-{1}', ${{ inputs.lang_name }}, ${{ inputs.lang_version }})
+  image: format('ghcr.io/unfor19/release-action:{0}-{1}', ${{ inputs.lang-name }}, ${{ inputs.lang-version }})
   args:
     - --lang_name
-    - ${{ inputs.lang_name }}
+    - ${{ inputs.lang-name }}
     - --lang_version
-    - ${{ inputs.lang_version }}
+    - ${{ inputs.lang-version }}
