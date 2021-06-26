@@ -10,6 +10,9 @@ inputs:
   lang-version:
     description: "1.16, 12.14, etc."
     required: true
+  action:
+    description: "build, test, publish"
+    required: true
 outputs:
   lang-name:
     description: ""
@@ -23,3 +26,5 @@ runs:
     - "${{ inputs.lang-name }}"
     - --lang_version
     - "${{ inputs.lang-version }}"
+    - --action
+    - "${{ inputs.action }}"

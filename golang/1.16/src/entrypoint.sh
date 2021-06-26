@@ -7,7 +7,7 @@ echo "$LANG_NAME"
 echo "$LANG_VERSION"
 echo "::set-output name=lang_name::$LANG_NAME"
 echo "::set-output name=lang_version::$LANG_VERSION"
-if [[ -f build.sh ]]; then
+if [[ $ACTION = "build" && -f build.sh ]]; then
     echo "found build.sh file"
     bash ./build.sh
     echo "executing app"
