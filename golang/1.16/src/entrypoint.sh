@@ -23,7 +23,6 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
     log_msg "Found build.sh file"
     bash ./build.sh
     echo "$GOPATH"
-    ls -lh "${GOPATH}/pkg/mod/cache/download/golang.org/"
     log_msg "Executing app"
     ./golang/app
 elif [[ $ACTION = "test" ]]; then
