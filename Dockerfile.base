@@ -51,9 +51,11 @@ ARG ZIP_VERSION
 RUN apk --update add \
     bash=~"${BASH_VERSION}" \
     build-base=~"${BUILD_BASE_VERSION}" \
+    ca-certificates \
     libstdc++=~"${LIBSTC_CPP_VERSION}" \
     git=~"${GIT_VERSION}" \
     openssh=~"${OPENSSH_VERSION}" \
+    tzdata \
     util-linux=~"${UTIL_LINUX_VERSION}" \
     zip=~"${ZIP_VERSION}" && \
     rm -rf /var/lib/apt/lists/* && \
