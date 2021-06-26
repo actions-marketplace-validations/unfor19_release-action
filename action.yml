@@ -18,5 +18,5 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - run: docker pull ghcr.io/unfor19/release-action:golang-1.16
+    - run: docker pull ghcr.io/unfor19/release-action:${{ inputs.lang-name }}-${{ inputs.lang-version }}
       shell: bash
