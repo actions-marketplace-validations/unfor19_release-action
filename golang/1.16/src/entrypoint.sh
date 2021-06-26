@@ -11,7 +11,7 @@ if [[ -f build.sh ]]; then
     echo "found build.sh file"
     bash ./build.sh
     echo "executing app"
-    ./app
+    app
 else
     echo "build.sh file not found"
 fi
