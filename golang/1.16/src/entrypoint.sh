@@ -19,7 +19,6 @@ log_msg(){
 }
 
 
-echo "PWD = $PWD"
 if [[ $ACTION = "build" && -f build.sh ]]; then
     log_msg "Found build.sh file"
     bash ./build.sh
