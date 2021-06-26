@@ -12,6 +12,9 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
     bash ./build.sh
     echo "executing app"
     ./golang/app
+elif [[ $ACTION = "test" ]]; then
+    cd ./golang || exit 1
+    go test -v
 else
-    echo "build.sh file not found"
+    echo "unknown action"
 fi
