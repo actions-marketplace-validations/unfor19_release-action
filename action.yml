@@ -22,5 +22,5 @@ runs:
     #   shell: bash
     # - run: docker pull ghcr.io/unfor19/release-action:${{ inputs.lang-name }}-${{ inputs.lang-version }}
     #   shell: bash
-    - run: docker run -v "$PWD"/:/code/ --workdir=/code/ --rm ghcr.io/unfor19/release-action:${{ inputs.lang-name }}-${{ inputs.lang-version }} /code/build.sh
+    - run: docker run -v "$PWD"/:/src/ --workdir=/code/ --rm ghcr.io/unfor19/release-action:${{ inputs.lang-name }}-${{ inputs.lang-version }} /code/entrypoint.sh
       shell: bash
