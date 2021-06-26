@@ -20,5 +20,5 @@ runs:
   steps:
     - run: docker pull ghcr.io/unfor19/release-action:${{ inputs.lang-name }}-${{ inputs.lang-version }}
       shell: bash
-    - run: docker run -t --rm ghcr.io/unfor19/release-action:${{ inputs.lang-name }}-${{ inputs.lang-version }} ls -lh
+    - run: docker run --rm ghcr.io/unfor19/release-action:${{ inputs.lang-name }}-${{ inputs.lang-version }} ls -lh
       shell: bash
