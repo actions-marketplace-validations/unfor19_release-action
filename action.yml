@@ -17,7 +17,7 @@ outputs:
     description: ""
 runs:
   using: "docker"
-  image: format('ghcr.io/unfor19/release-action:{0}-{1}', ${{ inputs.lang-name }}, ${{ inputs.lang-version }})
+  image: $GITHUB_REPOSITORY # format('ghcr.io/unfor19/release-action:{0}-{1}', ${{ inputs.lang-name }}, ${{ inputs.lang-version }})
   args:
     - --lang_name
     - ${{ inputs.lang-name }}
