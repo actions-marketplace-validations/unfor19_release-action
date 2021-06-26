@@ -22,7 +22,7 @@ runs:
     #   shell: bash
     # - run: docker pull ghcr.io/unfor19/release-action:${{ inputs.lang-name }}-${{ inputs.lang-version }}
     #   shell: bash
-    - run: docker run --rm -v "$PWD"/:"${GITHUB_WORKSPACE}" --workdir="${GITHUB_WORKSPACE}" --rm ghcr.io/unfor19/release-action:${{ inputs.lang-name }}-${{ inputs.lang-version }} /code/entrypoint.sh
+    - run: docker run --rm -v "$PWD"/:"${GITHUB_WORKSPACE}" --workdir="${GITHUB_WORKSPACE}" --rm ghcr.io/unfor19/release-action:${{ inputs.lang-name }}-${{ inputs.lang-version }} --help
       shell: bash
     - run: cat .status
       shell: bash
