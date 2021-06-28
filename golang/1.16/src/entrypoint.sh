@@ -25,14 +25,14 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
     if [[ -d "${GITHUB_WORKSPACE}/.cache-modules" ]]; then
         mkdir -p /go/pkg/mod
         ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
-        mv -v "${GITHUB_WORKSPACE}/.cache-modules/*" /go/pkg/mod/
+        mv -v "${GITHUB_WORKSPACE}/.cache-modules/"* /go/pkg/mod/
         log_msg "Cache dir"
         ls -lh /go/pkg/mod
     fi
     if [[ -d "${GITHUB_WORKSPACE}/.cache-go-build" ]]; then
         log_msg "Cache go-build exists!"
         mkdir -p ~/.cache/go-build
-        mv -v "${GITHUB_WORKSPACE}/.cache-go-build/*" ~/.cache/go-build/
+        mv -v "${GITHUB_WORKSPACE}/.cache-go-build/"* ~/.cache/go-build/
         ls -lh ~/.cache/go-build || true
     fi
     log_msg "Executing build.sh script"
