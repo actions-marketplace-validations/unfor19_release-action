@@ -25,7 +25,7 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
     if [[ -d "${GITHUB_WORKSPACE}/.cache-modules" ]]; then
         mkdir -p /go/pkg/mod
         ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
-        mv "${GITHUB_WORKSPACE}/.cache-modules" /go/pkg/mod
+        mv "${GITHUB_WORKSPACE}/.cache-modules" /go/pkg/mod/
         log_msg "Cache dir"
         ls -lh /go/pkg/mod
     fi
