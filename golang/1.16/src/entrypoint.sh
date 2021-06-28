@@ -43,10 +43,10 @@ elif [[ $ACTION = "test" ]]; then
     go test -v
 elif [[ $ACTION = "dependencies" ]]; then
     log_msg "Getting dependencies ..."
+    mkdir -p /go/pkg/mod
+    ln -s ./.cache-modules /go/pkg/mod
     go mod download -json
-    mv /go/pkg/mod/ ./.cache-modules/
-    ls -lh
-    ls -lh ./.cache-modules || true
+    ls -lh /go/pkg/mod || true
 else
     error_msg "Unknown action"
 fi
