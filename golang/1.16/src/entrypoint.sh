@@ -30,20 +30,22 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
     if [[ -d ".cache-go-build" ]]; then
         log_msg "Cache go-build exists!"
         ln -s ./.cache-go-build ~/.cache/go-build
-        ls -lh ~/.cache/go-build || true
+        ls -lh /go/pkg/mod/ || true
     fi
     log_msg "Executing build.sh script"
     bash ./build.sh
     ls -lh
     log_msg "Caching build ..."
-    mv ~/.cache/go-build ./.cache-go-build
+    mv ~/.cache/go-build ./.cache-go-build/
 elif [[ $ACTION = "test" ]]; then
     cd ./golang || exit 1
     go test -v
 elif [[ $ACTION = "dependencies" ]]; then
     log_msg "Getting dependencies ..."
     go mod download -json
-    mv /go/pkg/mod/cache ./.cache-modules
+    mv /go/pkg/mod/ ./.cache-modules/
+    ls -lh
+    ls -lh ./.cache-modules || true
 else
     error_msg "Unknown action"
 fi
