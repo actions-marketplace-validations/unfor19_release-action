@@ -22,13 +22,10 @@ log_msg(){
 if [[ $ACTION = "build" && -f build.sh ]]; then
     log_msg "Found build.sh file"
     log_msg "Checking cache dir"
-    if [[ -d ".cache-modules" ]]; then
-        log_msg "Cache modules exists!"
-        mkdir -p /go/pkg/mod
-        ln -s ./.cache-modules /go/pkg/mod
-        ls -lh /go/pkg/mod/ || true
-    fi
-    if [[ -d ".cache-go-build" ]]; then
+    mkdir -p /go/pkg/mod
+    ln -s ./.cache-modules /go/pkg/mod
+    ls -lh /go/pkg/mod/ || true
+    if [[ -L "${HOME}/.cache/go-build" ]]; then
         log_msg "Cache go-build exists!"
         ln -s ./.cache-go-build ~/.cache/go-build
         ls -lh /go/pkg/mod/ || true
