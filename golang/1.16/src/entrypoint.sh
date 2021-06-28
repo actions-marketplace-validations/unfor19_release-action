@@ -22,14 +22,17 @@ log_msg(){
 if [[ $ACTION = "build" && -f build.sh ]]; then
     log_msg "Found build.sh file"
     log_msg "Checking cache dir"
-    mkdir -p /go/pkg/mod
-    ln -s ./.cache-modules /go/pkg/mod
-    ls -lh /go/pkg/mod/ || true
-    if [[ -L "${HOME}/.cache/go-build" ]]; then
-        log_msg "Cache go-build exists!"
-        ln -s ./.cache-go-build ~/.cache/go-build
-        ls -lh /go/pkg/mod/ || true
+    if [[ -d ".cache-modules" ]]; then
+        mkdir -p /go/pkg/mod
+        mv ./.cache-modules /go/pkg/mod
+        log_msg "Cache dir"
+        ls -lh /go/pkg/mod
     fi
+    # if [[ -L "${HOME}/.cache/go-build" ]]; then
+    #     log_msg "Cache go-build exists!"
+    #     ln -s ./.cache-go-build ~/.cache/go-build
+    #     ls -lh /go/pkg/mod/ || true
+    # fi
     log_msg "Executing build.sh script"
     bash ./build.sh
     ls -lh
@@ -40,10 +43,9 @@ elif [[ $ACTION = "test" ]]; then
     go test -v
 elif [[ $ACTION = "dependencies" ]]; then
     log_msg "Getting dependencies ..."
-    mkdir -p /go/pkg/mod
-    ln -s ./.cache-modules /go/pkg/mod
     go mod download -json
-    ls -lh /go/pkg/mod || true
+    mv /go/pkg/mod ./.cache-modules
+    ls -lh ./.cache-modules || true
 else
     error_msg "Unknown action"
 fi
