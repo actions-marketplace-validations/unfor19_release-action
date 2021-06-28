@@ -45,7 +45,7 @@ elif [[ $ACTION = "test" ]]; then
     go test -v
 elif [[ $ACTION = "dependencies" ]]; then
     log_msg "Getting dependencies ..."
-    go mod download -json
+    go mod download # -json
     mv -v /go/pkg/mod "${GITHUB_WORKSPACE}/.cache-modules"
     ls -lh "${GITHUB_WORKSPACE}/.cache-modules" || true
 else
