@@ -24,6 +24,8 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
     log_msg "Checking cache dir"
     if [[ -d ".cache-modules" ]]; then
         log_msg "Cache modules exists!"
+        ls -lh /go || true
+        ls -lh ~/go || true
         ln -s ./.cache-modules /go/pkg/mod
         ls -lh /go/pkg/mod/ || true
     fi
