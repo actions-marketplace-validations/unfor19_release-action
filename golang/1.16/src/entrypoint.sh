@@ -30,10 +30,10 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
         ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
         cp -r "${GITHUB_WORKSPACE}/.cache-modules"/* /go/pkg/mod/
     fi
-    if [[ -d "${GITHUB_WORKSPACE}.cache-go-build/" ]]; then
+    if [[ -d "${GITHUB_WORKSPACE}/.cache-go-build/" ]]; then
         log_msg "Cache go-build exists!"
         mkdir -p ~/.cache/go-build
-        mv "${GITHUB_WORKSPACE}.cache-go-build/"* ~/.cache/go-build/
+        mv "${GITHUB_WORKSPACE}/.cache-go-build/"* ~/.cache/go-build/
     fi
     log_msg "Executing build.sh script"
     bash ./build.sh
@@ -41,9 +41,9 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
     ls -lh
     log_msg "Caching build and modules..."
     mkdir -p "${GITHUB_WORKSPACE}.cache-go-build/"
-    mv ~/.cache/go-build/* "${GITHUB_WORKSPACE}.cache-go-build/"
+    mv ~/.cache/go-build/* "${GITHUB_WORKSPACE}/.cache-go-build/"
     log_msg "Setting ownership of .cache-go-build to current user ..."
-    chown -R 1001:121 "${GITHUB_WORKSPACE}.cache-go-build"
+    chown -R 1001:121 "${GITHUB_WORKSPACE}/.cache-go-build"
     log_msg "Setting ownership of ${GITHUB_WORKSPACE}/.cache-modules to current user ..."
     chown -R 1001:121 "${GITHUB_WORKSPACE}/.cache-modules"
     ls -lah
