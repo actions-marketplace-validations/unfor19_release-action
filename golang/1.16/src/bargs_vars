@@ -9,7 +9,7 @@ description=Language version: 1.16, 12.14, etc.
 ---
 name=action
 short=a
-options=build test publish dependencies
+options=build test publish dependencies release
 ---
 name=src_dir
 short=sd
