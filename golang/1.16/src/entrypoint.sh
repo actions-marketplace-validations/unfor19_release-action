@@ -319,6 +319,7 @@ elif [[ $ACTION = "test" ]]; then
     #     ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
     #     cp -r "${GITHUB_WORKSPACE}/.cache-modules"/* /go/pkg/mod/
     # fi
+    unset GOOS GOARCH # Avoids errors on arm64 builds
     go test -v
 elif [[ $ACTION = "dependencies" ]]; then
     log_msg "Getting dependencies ..."
