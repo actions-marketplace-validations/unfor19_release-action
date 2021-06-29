@@ -126,7 +126,6 @@ build(){
   rmdir "$project_root"
   ln -s "$GITHUB_WORKSPACE" "$project_root"
   cd "$project_root"
-  # go get -v ./...
   go mod download
 
   file_extenstion=''
