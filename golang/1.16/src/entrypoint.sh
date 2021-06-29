@@ -23,6 +23,7 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
     log_msg "Found build.sh file"
     log_msg "Checking cache dir"
     if [[ -d .cache-modules ]]; then
+        log_msg "Using .cache-modules"
         mkdir -p /go/pkg/mod
         ls -lh .cache-modules
         mv .cache-modules/* /go/pkg/mod/
@@ -37,9 +38,10 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
     ls -lh
     log_msg "Caching build and modules..."
     mkdir -p .cache-go-build
-    mv -v ~/.cache/go-build/* .cache-go-build/
+    mv ~/.cache/go-build/* .cache-go-build/
     # ls -lh "${GITHUB_WORKSPACE}/.cache-go-build"
-    mv -v /go/pkg/mod/* .cache-modules/
+    mv /go/pkg/mod/* .cache-modules/
+    wait
     # ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
 elif [[ $ACTION = "test" ]]; then
     cd ./golang || exit 1
