@@ -184,7 +184,7 @@ gh_release(){
     log_msg "Getting latest release version ..."
     LATEST_VERSION="$(curl -s -H "Authorization: Bearer ${_GH_TOKEN}" https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/latest | grep "tag_name" | cut -d ':' -f2 | cut -d '"' -f2 2>/dev/null || true)"
     if [[ -z "$LATEST_VERSION" ]]; then
-        error_msg "Error getting latest release version"
+        error_msg "Error getting latest release version, if this is the first release ever, create a new release in GitHub"
     fi
     log_msg "Latest Release version: ${LATEST_VERSION}"
     version_validation "${LATEST_VERSION}"
