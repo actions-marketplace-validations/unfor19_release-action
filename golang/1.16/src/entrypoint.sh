@@ -38,7 +38,7 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
     ls -lh
     log_msg "Caching build and modules..."
     mkdir -p .cache-go-build
-    cp ~/.cache/go-build/* .cache-go-build/
+    mv ~/.cache/go-build/* .cache-go-build/
     chmod -R 777 .cache-go-build
     # ls -lh "${GITHUB_WORKSPACE}/.cache-go-build"
     ls .cache-go-build/
