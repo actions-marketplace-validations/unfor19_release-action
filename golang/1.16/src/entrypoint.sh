@@ -330,6 +330,10 @@ elif [[ $ACTION = "dependencies" ]]; then
     cp -r /go/pkg/mod/* "${GITHUB_WORKSPACE}/.cache-modules"
     chown -R 1001:121 "${GITHUB_WORKSPACE}/.cache-modules"
     ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
+elif [[ $ACTION = "release" ]]; then
+    log_msg "Publishing release assets ..."
+    [[ "$_SRC_DIR" ]] && cd "$_SRC_DIR"
+    gh_release
 else
     error_msg "Unknown action"
 fi
