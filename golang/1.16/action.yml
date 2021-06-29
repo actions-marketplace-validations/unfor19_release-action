@@ -13,6 +13,9 @@ inputs:
   action:
     description: "build, test, publish"
     required: true
+  src-dir:
+    description: "source dir path"
+    required: false
 outputs:
   lang-name:
     description: ""
@@ -28,3 +31,5 @@ runs:
     - "${{ inputs.lang-version }}"
     - --action
     - "${{ inputs.action }}"
+    - --src_dir
+    - "${{ inputs.src-dir }}"

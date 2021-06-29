@@ -11,6 +11,11 @@ name=action
 short=a
 options=build test publish dependencies
 ---
+name=src_dir
+short=sd
+description=Source dir path
+default=""
+---
 name=bargs
 description=bash entrypoint.sh --lang_name golang --lang_version 1.16
 default=irrelevant
