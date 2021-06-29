@@ -312,13 +312,13 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
     ls -lah
 elif [[ $ACTION = "test" ]]; then
     [[ "$_SRC_DIR" ]] && cd "$_SRC_DIR"
-    log_msg "Checking cache dir"
-    if [[ -d "${GITHUB_WORKSPACE}/.cache-modules" ]]; then
-        log_msg "Using ${GITHUB_WORKSPACE}/.cache-modules"
-        mkdir -p /go/pkg/mod
-        ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
-        cp -r "${GITHUB_WORKSPACE}/.cache-modules"/* /go/pkg/mod/
-    fi
+    # log_msg "Checking cache dir"
+    # if [[ -d "${GITHUB_WORKSPACE}/.cache-modules" ]]; then
+    #     log_msg "Using ${GITHUB_WORKSPACE}/.cache-modules"
+    #     mkdir -p /go/pkg/mod
+    #     ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
+    #     cp -r "${GITHUB_WORKSPACE}/.cache-modules"/* /go/pkg/mod/
+    # fi
     go test -v
 elif [[ $ACTION = "dependencies" ]]; then
     log_msg "Getting dependencies ..."
