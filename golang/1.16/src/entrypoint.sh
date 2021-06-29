@@ -42,9 +42,9 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
     log_msg "Caching build and modules..."
     mkdir -p "${GITHUB_WORKSPACE}/.cache-go-build/"
     mv ~/.cache/go-build/* "${GITHUB_WORKSPACE}/.cache-go-build/"
-    log_msg "Setting ownership of .cache-go-build to current user ..."
+    log_msg "Setting ownership of .cache-go-build to 1001:121 ..."
     chown -R 1001:121 "${GITHUB_WORKSPACE}/.cache-go-build"
-    log_msg "Setting ownership of ${GITHUB_WORKSPACE}/.cache-modules to current user ..."
+    log_msg "Setting ownership of ${GITHUB_WORKSPACE}/.cache-modules to 1001:121 ..."
     chown -R 1001:121 "${GITHUB_WORKSPACE}/.cache-modules"
     ls -lah
 elif [[ $ACTION = "test" ]]; then
