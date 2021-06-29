@@ -16,7 +16,7 @@ inputs:
   src-dir:
     description: "source dir path"
     required: false
-    default: ""
+    default: "."
 outputs:
   lang-name:
     description: ""
