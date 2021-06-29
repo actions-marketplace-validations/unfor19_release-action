@@ -26,7 +26,7 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
         log_msg "Using .cache-modules"
         mkdir -p /go/pkg/mod
         ls -lh .cache-modules
-        mv .cache-modules/* /go/pkg/mod/
+        cp -r .cache-modules/* /go/pkg/mod/
     fi
     if [[ -d .cache-go-build ]]; then
         log_msg "Cache go-build exists!"
@@ -38,10 +38,10 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
     ls -lh
     log_msg "Caching build and modules..."
     mkdir -p .cache-go-build
-    mv ~/.cache/go-build/* .cache-go-build/
+    cp ~/.cache/go-build/* .cache-go-build/
+    chmod -R 777 .cache-go-build
     # ls -lh "${GITHUB_WORKSPACE}/.cache-go-build"
-    mv /go/pkg/mod/* .cache-modules/
-    wait
+    ls .cache-go-build/
     # ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
 elif [[ $ACTION = "test" ]]; then
     cd ./golang || exit 1
@@ -51,6 +51,7 @@ elif [[ $ACTION = "dependencies" ]]; then
     go mod download # -json
     mkdir -p .cache-modules
     mv /go/pkg/mod/* .cache-modules
+    chmod -R 777 .cache-modules
 else
     error_msg "Unknown action"
 fi
