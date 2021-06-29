@@ -18,6 +18,8 @@ log_msg(){
   echo -e "[LOG] $(date) :: $msg"
 }
 
+log_msg "Running as $(whoami)"
+
 
 if [[ $ACTION = "build" && -f build.sh ]]; then
     log_msg "Found build.sh file"
