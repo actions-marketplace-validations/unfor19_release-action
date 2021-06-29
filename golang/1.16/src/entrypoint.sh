@@ -54,8 +54,9 @@ elif [[ $ACTION = "dependencies" ]]; then
     log_msg "Getting dependencies ..."
     [[ "$_SRC_DIR" ]] && cd "$_SRC_DIR"
     go mod download # -json
+    log_msg "Finished downloading dependencies"
     mkdir -p "${GITHUB_WORKSPACE}/.cache-modules"
-    mv /go/pkg/mod/* "${GITHUB_WORKSPACE}/.cache-modules/"
+    cp -r /go/pkg/mod/* "${GITHUB_WORKSPACE}/.cache-modules"
     chown -R 1001:121 "${GITHUB_WORKSPACE}/.cache-modules"
     ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
 else
