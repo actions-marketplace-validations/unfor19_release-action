@@ -21,6 +21,10 @@ inputs:
     description: "Set this if the output file name is different from the GitHub repo name"
     required: false
     default: ""
+  gh-token:
+    description: "GitHub Personal Access token for uploading release assets, defaults to GITHUB_TOKEN"
+    required: false
+    default: ""
 outputs:
   lang-name:
     description: ""
@@ -40,3 +44,5 @@ runs:
     - "${{ inputs.src-dir }}"
     - --project_name
     - "${{ inputs.project-name }}"
+    - --gh_token
+    - "${{ inputs.gh-token }}"
