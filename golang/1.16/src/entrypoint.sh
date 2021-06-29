@@ -36,9 +36,11 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
     bash ./build.sh
     ls -lh
     log_msg "Caching build and modules..."
-    mv -v ~/.cache/go-build "${GITHUB_WORKSPACE}/.cache-go-build"
+    mkdir -p "${GITHUB_WORKSPACE}/.cache-go-build"
+    mv -v ~/.cache/go-build/* "${GITHUB_WORKSPACE}/.cache-go-build/"
     # ls -lh "${GITHUB_WORKSPACE}/.cache-go-build"
-    mv -v /go/pkg/mod "${GITHUB_WORKSPACE}/.cache-modules"
+    mkdir -p "${GITHUB_WORKSPACE}/.cache-modules"
+    mv -v /go/pkg/mod/* "${GITHUB_WORKSPACE}/.cache-modules/"
     # ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
 elif [[ $ACTION = "test" ]]; then
     cd ./golang || exit 1
