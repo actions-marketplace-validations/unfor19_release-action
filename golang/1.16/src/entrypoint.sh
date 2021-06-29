@@ -20,7 +20,8 @@ log_msg(){
 
 log_msg "Running as $(whoami)"
 _SRC_DIR="${SRC_DIR:-""}"
-
+_PROJECT_NAME="${PROJECT_NAME:-"$(basename "$GITHUB_REPOSITORY")"}"
+log_msg "Project Name: $_PROJECT_NAME"
 if [[ $ACTION = "build" && -f build.sh ]]; then
     log_msg "Found build.sh file"
     log_msg "Checking cache dir"
