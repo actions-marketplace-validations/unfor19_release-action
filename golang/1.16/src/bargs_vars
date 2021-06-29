@@ -23,7 +23,7 @@ default=$(basename $GITHUB_REPOSITORY)
 name=gh_token
 short=gt
 description=GitHub Personal Access token for uploading release assets
-default="$GITHUB_TOKEN"
+default="false"
 ---
 name=bargs
 description=bash entrypoint.sh --lang_name golang --lang_version 1.16

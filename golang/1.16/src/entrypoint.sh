@@ -333,7 +333,7 @@ elif [[ $ACTION = "dependencies" ]]; then
 elif [[ $ACTION = "release" ]]; then
     log_msg "Publishing release assets ..."
     [[ "$_SRC_DIR" ]] && cd "$_SRC_DIR"
-    if [[ -z "$_GH_TOKEN" ]]; then
+    if [[ -z "$_GH_TOKEN" || "$_GH_TOKEN" = "false" ]]; then
         error_msg "Must provide GH_TOKEN (gh-token) to publish release assets"
     fi
     gh_release
