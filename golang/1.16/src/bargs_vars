@@ -18,7 +18,7 @@ description=Source dir path
 name=project_name
 short=pn
 description=Usually the name of the GitHub repo
-allow_empty=true
+default=$(basename $GITHUB_REPOSITORY)
 ---
 name=bargs
 description=bash entrypoint.sh --lang_name golang --lang_version 1.16
