@@ -40,7 +40,7 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
     log_msg "Finished building app"
     ls -lh
     log_msg "Caching build and modules..."
-    mkdir -p "${GITHUB_WORKSPACE}.cache-go-build/"
+    mkdir -p "${GITHUB_WORKSPACE}/.cache-go-build/"
     mv ~/.cache/go-build/* "${GITHUB_WORKSPACE}/.cache-go-build/"
     log_msg "Setting ownership of .cache-go-build to current user ..."
     chown -R 1001:121 "${GITHUB_WORKSPACE}/.cache-go-build"
