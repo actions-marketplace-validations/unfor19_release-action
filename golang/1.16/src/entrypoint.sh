@@ -56,7 +56,7 @@ elif [[ $ACTION = "test" ]]; then
         mkdir -p /go/pkg/mod
         ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
         cp -r "${GITHUB_WORKSPACE}/.cache-modules"/* /go/pkg/mod/
-    fi    
+    fi
     go test -v
 elif [[ $ACTION = "dependencies" ]]; then
     log_msg "Getting dependencies ..."
