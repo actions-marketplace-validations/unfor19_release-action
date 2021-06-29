@@ -22,25 +22,24 @@ log_msg(){
 if [[ $ACTION = "build" && -f build.sh ]]; then
     log_msg "Found build.sh file"
     log_msg "Checking cache dir"
-    if [[ -d "${GITHUB_WORKSPACE}/.cache-modules" ]]; then
+    if [[ -d .cache-modules ]]; then
         mkdir -p /go/pkg/mod
-        ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
-        mv "${GITHUB_WORKSPACE}/.cache-modules/"* /go/pkg/mod/
+        ls -lh .cache-modules
+        mv .cache-modules/* /go/pkg/mod/
     fi
-    if [[ -d "${GITHUB_WORKSPACE}/.cache-go-build" ]]; then
+    if [[ -d .cache-go-build ]]; then
         log_msg "Cache go-build exists!"
         mkdir -p ~/.cache/go-build
-        mv "${GITHUB_WORKSPACE}/.cache-go-build/"* ~/.cache/go-build/
+        mv .cache-go-build/* ~/.cache/go-build/
     fi
     log_msg "Executing build.sh script"
     bash ./build.sh
     ls -lh
     log_msg "Caching build and modules..."
-    mkdir -p "${GITHUB_WORKSPACE}/.cache-go-build"
-    mv -v ~/.cache/go-build/* "${GITHUB_WORKSPACE}/.cache-go-build/"
+    mkdir -p .cache-go-build
+    mv -v ~/.cache/go-build/* .cache-go-build/
     # ls -lh "${GITHUB_WORKSPACE}/.cache-go-build"
-    mkdir -p "${GITHUB_WORKSPACE}/.cache-modules"
-    mv -v /go/pkg/mod/* "${GITHUB_WORKSPACE}/.cache-modules/"
+    mv -v /go/pkg/mod/* .cache-modules/
     # ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
 elif [[ $ACTION = "test" ]]; then
     cd ./golang || exit 1
@@ -48,7 +47,8 @@ elif [[ $ACTION = "test" ]]; then
 elif [[ $ACTION = "dependencies" ]]; then
     log_msg "Getting dependencies ..."
     go mod download # -json
-    mv /go/pkg/mod "${GITHUB_WORKSPACE}/.cache-modules"
+    mkdir -p .cache-modules
+    mv /go/pkg/mod/* .cache-modules
 else
     error_msg "Unknown action"
 fi
