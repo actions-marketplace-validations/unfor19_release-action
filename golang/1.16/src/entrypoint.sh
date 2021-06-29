@@ -279,7 +279,7 @@ _CONNECT_TIMEOUT="${CONNECT_TIMEOUT:-"30"}"
 _CONNECT_RETRY="${_CONNECT_RETRY:-"3"}"
 _RETRY_DELAY="${RETRY_DELAY:-"20"}"
 _OVERWRITE_RELEASE="${OVERWRITE_RELEASE:-""}"
-_GH_TOKEN="${GH_TOKEN:-"$GITHUB_TOKEN"}"
+_GH_TOKEN="${GH_TOKEN:-""}"
 
 log_msg "Running as $(whoami)"
 _SRC_DIR="${SRC_DIR:-""}"
@@ -333,6 +333,9 @@ elif [[ $ACTION = "dependencies" ]]; then
 elif [[ $ACTION = "release" ]]; then
     log_msg "Publishing release assets ..."
     [[ "$_SRC_DIR" ]] && cd "$_SRC_DIR"
+    if [[ -z "$_GH_TOKEN" ]]; then
+        error_msg "Must provide GH_TOKEN (gh-token) to publish release assets"
+    fi
     gh_release
 else
     error_msg "Unknown action"
