@@ -40,6 +40,8 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
     mkdir -p .cache-go-build
     mv ~/.cache/go-build/* .cache-go-build/
     ls -lh .cache-go-build/
+    chmod -R a+rwx .cache-go-build
+    chmod -R a+rwx .cache-modules
 elif [[ $ACTION = "test" ]]; then
     cd ./golang || exit 1
     go test -v
