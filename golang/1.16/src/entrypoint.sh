@@ -41,9 +41,9 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
     mkdir -p .cache-go-build
     mv ~/.cache/go-build/* .cache-go-build/
     log_msg "Setting ownership of .cache-go-build to current user ..."
-    chown -R "$(id -u):$(id -g)" .cache-go-build
+    chown -R 1001:121 .cache-go-build
     log_msg "Setting ownership of .cache-modules to current user ..."
-    chown -R "$(id -u):$(id -g)" .cache-modules
+    chown -R 1001:121 .cache-modules
     ls -lah
 elif [[ $ACTION = "test" ]]; then
     cd ./golang || exit 1
@@ -53,7 +53,7 @@ elif [[ $ACTION = "dependencies" ]]; then
     go mod download # -json
     mkdir -p .cache-modules
     mv /go/pkg/mod/* .cache-modules
-    chown -R "$(id -u):$(id -g)" .cache-modules
+    chown -R 1001:121 .cache-modules
     ls -lh .cache-modules
 else
     error_msg "Unknown action"
