@@ -177,7 +177,7 @@ sync_commit_tag(){
       -H "Accept: application/vnd.github.v3+json" \
       -H "Authorization: Bearer ${_GH_TOKEN}" \
       -H "Content-Type: application/json" \
-      -d '{"sha":"'"$future_sha"'","force":"true"}'
+      -d '{"sha":"'"$future_sha"'","force":"true"}' \
       "https://api.github.com/repos/${github_repository}/git/${github_ref}" | jq
   fi
 }
