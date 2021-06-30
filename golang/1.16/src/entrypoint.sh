@@ -359,7 +359,6 @@ elif [[ $ACTION = "release" ]]; then
     if [[ -z "$_GH_TOKEN" || "$_GH_TOKEN" = "false" ]]; then
         error_msg "Must provide GH_TOKEN (gh-token) to publish release assets"
     fi
-    init_git
     gh_release
 else
     error_msg "Unknown action"
