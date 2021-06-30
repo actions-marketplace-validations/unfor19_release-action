@@ -165,6 +165,8 @@ sync_commit_tag(){
     "https://api.github.com/repos/${github_repository}/git/${github_ref}" | jq)"
   current_sha="$(echo "$response" | jq -cr '.object.sha')"
   if [[ "$current_sha" = "$future_sha" ]]; then
+    log_msg "Tag ${tag_name} is already synced with the commit ${future_sha}"
+  else
     log_msg "Replacing ${current_sha} tag ${tag_name} with ${future_sha}"
     curl \
       --connect-timeout "$_CONNECT_TIMEOUT" \
@@ -177,8 +179,6 @@ sync_commit_tag(){
       -H "Content-Type: application/json" \
       -d '{"sha":"'"$future_sha"'","force":"true"}'
       "https://api.github.com/repos/${github_repository}/git/${github_ref}" | jq
-  else
-    log_msg "Tag is already synced with commit"
   fi
 }
 
