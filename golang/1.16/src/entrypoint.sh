@@ -140,6 +140,13 @@ build(){
   echo "$output"
 }
 
+
+init_git(){
+  git config user.name "ReleaseAction"
+  git config user.email "releaseaction@meirg.co.il"
+}
+
+
 sync_commit_tag(){
   local tag_name="$1"
   local github_repository="$2"
@@ -349,6 +356,7 @@ elif [[ $ACTION = "release" ]]; then
     if [[ -z "$_GH_TOKEN" || "$_GH_TOKEN" = "false" ]]; then
         error_msg "Must provide GH_TOKEN (gh-token) to publish release assets"
     fi
+    init_git
     gh_release
 else
     error_msg "Unknown action"
