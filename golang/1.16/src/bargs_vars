@@ -17,14 +17,6 @@ short=gt
 description=GitHub Personal Access token for uploading release assets
 default="false"
 ---
-name=gh_author_name
-short=gn
-default="ReleaseAction"
----
-name=gh_author_email
-short=ge
-default="releaseaction@meirg.co.il"
----
 name=bargs
 description=bash entrypoint.sh --help
 default=irrelevant

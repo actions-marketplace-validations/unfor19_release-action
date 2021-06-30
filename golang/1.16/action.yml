@@ -19,20 +19,7 @@ inputs:
     description: "GitHub Personal Access token for uploading release assets, defaults to GITHUB_TOKEN"
     required: false
     default: ""
-  gh-author-name:
-    description: ""
-    required: false
-    default: "ReleaseAction"
-  gh-author-email:
-    description: ""
-    required: false
-    default: "releaseaction@meirg.co.il"
 
-outputs:
-  lang-name:
-    description: ""
-  lang-version:
-    description: ""
 runs:
   using: "docker"
   image: Dockerfile
@@ -45,7 +32,3 @@ runs:
     - "${{ inputs.project-name }}"
     - --gh_token
     - "${{ inputs.gh-token }}"
-    - --gh_author_name
-    - "${{ inputs.gh-author-name }}"
-    - --gh_author_email
-    - "${{ inputs.gh-author-email }}"
