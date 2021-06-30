@@ -144,20 +144,42 @@ build(){
 sync_commit_tag(){
   local tag_name="$1"
   local github_repository="$2"
-  local current_commit=""
-  current_commit="$(git rev-parse HEAD)"
+  local current_sha=""
+  local response=""
+  local github_ref=""
+  local future_sha=""
+  future_sha="$(git rev-parse HEAD)"
+  github_ref="refs/tags/${tag_name}"
   log_msg "Syncing release tag and current commit ..."
-  curl \
+
+  log_msg "Checking if it's necessary to sync ..."
+  response="$(curl \
     --connect-timeout "$_CONNECT_TIMEOUT" \
     --retry-all-errors \
     --retry "$_CONNECT_RETRY" \
     --retry-delay "$_RETRY_DELAY" \
-    -X "PATCH" \
+    -X "GET" \
     -H "Accept: application/vnd.github.v3+json" \
     -H "Authorization: Bearer ${_GH_TOKEN}" \
     -H "Content-Type: application/json" \
-    -d '{"sha":"'"$current_commit"'","force":"true"}'
-    "https://api.github.com/repos/${github_repository}/git/refs/tags/${tag_name}" | jq
+    "https://api.github.com/repos/${github_repository}/git/${github_ref}" | jq)"
+  current_sha="$(echo "$response" | jq -cf '.object.sha')"
+  if [[ "$current_sha" = "$future_sha" ]]; then
+    log_msg "Replacing ${current_sha} tag ${tag_name} with ${future_sha}"
+    curl \
+      --connect-timeout "$_CONNECT_TIMEOUT" \
+      --retry-all-errors \
+      --retry "$_CONNECT_RETRY" \
+      --retry-delay "$_RETRY_DELAY" \
+      -X "PATCH" \
+      -H "Accept: application/vnd.github.v3+json" \
+      -H "Authorization: Bearer ${_GH_TOKEN}" \
+      -H "Content-Type: application/json" \
+      -d '{"sha":"'"$future_sha"'","force":"true"}'
+      "https://api.github.com/repos/${github_repository}/git/${github_ref}" | jq
+  else
+    log_msg "Tag is already synced with commit"
+  fi
 }
 
 # TODO: Split
