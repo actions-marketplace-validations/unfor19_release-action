@@ -4,12 +4,6 @@ branding:
   color: "white"
 description: "Build and Release application in GitHub's ecosystem"
 inputs:
-  lang-name:
-    description: "golang, node, etc."
-    required: true
-  lang-version:
-    description: "1.16, 12.14, etc."
-    required: true
   action:
     description: "build, test, publish"
     required: true
@@ -25,6 +19,15 @@ inputs:
     description: "GitHub Personal Access token for uploading release assets, defaults to GITHUB_TOKEN"
     required: false
     default: ""
+  gh-author-name:
+    description: ""
+    required: false
+    default: "ReleaseAction"
+  gh-author-email:
+    description: ""
+    required: false
+    default: "releaseaction@meirg.co.il"
+
 outputs:
   lang-name:
     description: ""
@@ -34,10 +37,6 @@ runs:
   using: "docker"
   image: Dockerfile
   args:
-    - --lang_name
-    - "${{ inputs.lang-name }}"
-    - --lang_version
-    - "${{ inputs.lang-version }}"
     - --action
     - "${{ inputs.action }}"
     - --src_dir
@@ -46,3 +45,7 @@ runs:
     - "${{ inputs.project-name }}"
     - --gh_token
     - "${{ inputs.gh-token }}"
+    - --gh_author_name
+    - "${{ inputs.gh-author-name }}"
+    - --gh_author_email
+    - "${{ inputs.gh-author-email }}"

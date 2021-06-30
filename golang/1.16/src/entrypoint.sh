@@ -142,8 +142,8 @@ build(){
 
 
 init_git(){
-  git config user.name "ReleaseAction"
-  git config user.email "releaseaction@meirg.co.il"
+  git config user.name "$GH_AUTHOR_NAME"
+  git config user.email "$GH_AUTHOR_EMAIL"
 }
 
 
@@ -153,7 +153,7 @@ sync_commit_tag(){
   local current_commit=""
   current_commit="$(git rev-parse HEAD)"
   git tag -f -a "$tag_name" "$current_commit"
-  git push -f "$github_repository" "refs/tags/${tag_name}"
+  git push -f --tags "$github_repository" "refs/tags/${tag_name}"
 }
 
 # TODO: Split
