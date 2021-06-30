@@ -169,7 +169,7 @@ gh_release(){
             log_msg "Successfully skipped"
             exit 0
         fi
-    elif [[ "$GITHUB_EVENT_NAME" = "push" ]]; then
+    elif [[ "$GITHUB_EVENT_NAME" = "push" || "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]]; then
         ### Creates a new release and use it
         # Authenticate with GitHub
         gh config set prompt disabled
