@@ -91,6 +91,7 @@ gh_upload_asset(){
   if [[ -n "$target_delete_asset_url" ]] ; then
     log_msg "Deleting asset - ${target_delete_asset_url}"
     curl \
+      --fail \
       --connect-timeout "$_CONNECT_TIMEOUT" \
       --retry-all-errors \
       --retry "$_CONNECT_RETRY" \
@@ -106,6 +107,7 @@ gh_upload_asset(){
   log_msg "Target URL for upload: $target_url"
   log_msg "-X POST ${data_flag[*]}${asset_data} -H Content-Type: ${content_type} -H Authorization: Bearer HIDDEN"
   curl \
+    --fail \
     --connect-timeout "$_CONNECT_TIMEOUT" \
     --retry-all-errors \
     --retry "$_CONNECT_RETRY" \
@@ -154,6 +156,7 @@ sync_commit_tag(){
 
   log_msg "Checking if it's necessary to sync ..."
   response="$(curl \
+    --fail \
     --connect-timeout "$_CONNECT_TIMEOUT" \
     --retry-all-errors \
     --retry "$_CONNECT_RETRY" \
@@ -169,6 +172,7 @@ sync_commit_tag(){
   else
     log_msg "Replacing ${current_sha} tag ${tag_name} with ${future_sha}"
     curl \
+      --fail \
       --connect-timeout "$_CONNECT_TIMEOUT" \
       --retry-all-errors \
       --retry "$_CONNECT_RETRY" \
@@ -224,7 +228,7 @@ gh_release(){
 
         # Bump version and create release
         log_msg "Getting latest release version ..."
-        LATEST_VERSION="$(curl -s -H "Authorization: Bearer ${_GH_TOKEN}" https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/latest | grep "tag_name" | cut -d ':' -f2 | cut -d '"' -f2 2>/dev/null || true)"
+        LATEST_VERSION="$(curl --fail -s -H "Authorization: Bearer ${_GH_TOKEN}" https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/latest | grep "tag_name" | cut -d ':' -f2 | cut -d '"' -f2 2>/dev/null || true)"
         if [[ -z "$LATEST_VERSION" ]]; then
             error_msg "Error getting latest release version, if this is the first release ever, create a new release in GitHub"
         fi
