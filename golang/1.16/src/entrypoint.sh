@@ -155,7 +155,7 @@ gh_release(){
 
     EVENT_DATA=$(cat "$GITHUB_EVENT_PATH")
     if [[ "$GITHUB_EVENT_NAME" = "release" ]]; then
-    ### Use this release
+        ### Use this release
         _UPLOAD_URL=$(echo "$EVENT_DATA" | jq -r .release.upload_url)
         _UPLOAD_URL=${_UPLOAD_URL/\{?name,label\}/}
         RELEASE_NAME=$(echo "$EVENT_DATA" | jq -r .release.tag_name)
@@ -169,7 +169,7 @@ gh_release(){
             log_msg "Successfully skipped"
             exit 0
         fi
-        elif [[ "$GITHUB_EVENT_NAME" = "push" ]]; then
+    elif [[ "$GITHUB_EVENT_NAME" = "push" ]]; then
         ### Creates a new release and use it
         # Authenticate with GitHub
         gh config set prompt disabled
@@ -178,29 +178,30 @@ gh_release(){
         else
             log_msg "Attempting to login to GitHub with the GitHub CLI and GH_TOKEN"
             echo "$_GH_TOKEN" | gh auth login --with-token
-    fi
+        fi
 
-    # Bump version and create release
-    log_msg "Getting latest release version ..."
-    LATEST_VERSION="$(curl -s -H "Authorization: Bearer ${_GH_TOKEN}" https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/latest | grep "tag_name" | cut -d ':' -f2 | cut -d '"' -f2 2>/dev/null || true)"
-    if [[ -z "$LATEST_VERSION" ]]; then
-        error_msg "Error getting latest release version, if this is the first release ever, create a new release in GitHub"
-    fi
-    log_msg "Latest Release version: ${LATEST_VERSION}"
-    version_validation "${LATEST_VERSION}"
-    RELEASE_NAME=$(bump_version "$LATEST_VERSION")
-    log_msg "Bumped Latest Release version: ${RELEASE_NAME}"
-    log_msg "Attempting to create the new release ..."
-    # Create Release if does not exist - no assets yet
-    if gh release create "$RELEASE_NAME" -t "$RELEASE_NAME" -R "${GITHUB_REPOSITORY}" $_PRE_RELEASE_FLAG >/dev/null ; then
-        log_msg "Successfully created the release https://github.com/${GITHUB_REPOSITORY}/releases/tag/${RELEASE_NAME}"
-    fi
-    _RELEASE_DETAILS="$(gh api -H 'Accept: application/vnd.github.v3.raw+json' /repos/"$GITHUB_REPOSITORY"/releases | jq '.[] | select(.name=="'"$RELEASE_NAME"'")')"
-    _UPLOAD_URL="$(echo "$_RELEASE_DETAILS" | jq -rc '. | .upload_url')"
-    _UPLOAD_URL="${_UPLOAD_URL/\{*/}" # Cleanup
-    _RELEASE_ASSETS=$(echo "$_RELEASE_DETAILS" | jq '. | .assets')
+        # Bump version and create release
+        log_msg "Getting latest release version ..."
+        LATEST_VERSION="$(curl -s -H "Authorization: Bearer ${_GH_TOKEN}" https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/latest | grep "tag_name" | cut -d ':' -f2 | cut -d '"' -f2 2>/dev/null || true)"
+        if [[ -z "$LATEST_VERSION" ]]; then
+            error_msg "Error getting latest release version, if this is the first release ever, create a new release in GitHub"
+        fi
+        log_msg "Latest Release version: ${LATEST_VERSION}"
+        version_validation "${LATEST_VERSION}"
+        RELEASE_NAME=$(bump_version "$LATEST_VERSION")
+        log_msg "Bumped Latest Release version: ${RELEASE_NAME}"
+        log_msg "Attempting to create the new release ..."
+        # Create Release if does not exist - no assets yet
+        if gh release create "$RELEASE_NAME" -t "$RELEASE_NAME" -R "${GITHUB_REPOSITORY}" $_PRE_RELEASE_FLAG >/dev/null ; then
+            log_msg "Successfully created the release https://github.com/${GITHUB_REPOSITORY}/releases/tag/${RELEASE_NAME}"
+        fi
+
+        _RELEASE_DETAILS="$(gh api -H 'Accept: application/vnd.github.v3.raw+json' /repos/"$GITHUB_REPOSITORY"/releases | jq '.[] | select(.name=="'"$RELEASE_NAME"'")')"
+        _UPLOAD_URL="$(echo "$_RELEASE_DETAILS" | jq -rc '. | .upload_url')"
+        _UPLOAD_URL="${_UPLOAD_URL/\{*/}" # Cleanup
+        _RELEASE_ASSETS=$(echo "$_RELEASE_DETAILS" | jq '. | .assets')
     else
-    error_msg "Unhandled event type - ${GITHUB_EVENT_PATH}"
+        error_msg "Unhandled event type - ${GITHUB_EVENT_PATH}"
     fi
 
     log_msg "Target release version: ${RELEASE_NAME}"
@@ -226,28 +227,28 @@ gh_release(){
     log_msg "Preparing final artifact ..."
     log_msg "$FILE_LIST"
     if [[ "$GOOS" = "windows" ]]; then
-    if [[ "$_EXTRA_FILES" != "" || "$_COMPRESS" = "true" ]]; then
-        _ARTIFACT_SUFFIX=".zip"
-        _RELEASE_ARTIFACT_NAME="${_RELEASE_ARTIFACT_NAME}${_ARTIFACT_SUFFIX}"
-        _ARTIFACT_PATH="${_RELEASE_ARTIFACT_NAME}${_ARTIFACT_SUFFIX}"
-        zip -9r "$_ARTIFACT_PATH" ${FILE_LIST} # FILE_LIST unquoted on purpose
+        if [[ "$_EXTRA_FILES" != "" || "$_COMPRESS" = "true" ]]; then
+            _ARTIFACT_SUFFIX=".zip"
+            _RELEASE_ARTIFACT_NAME="${_RELEASE_ARTIFACT_NAME}${_ARTIFACT_SUFFIX}"
+            _ARTIFACT_PATH="${_RELEASE_ARTIFACT_NAME}${_ARTIFACT_SUFFIX}"
+            zip -9r "$_ARTIFACT_PATH" ${FILE_LIST} # FILE_LIST unquoted on purpose
+        else
+            _ARTIFACT_SUFFIX=".exe"
+            _RELEASE_ARTIFACT_NAME="${_RELEASE_ARTIFACT_NAME}${_ARTIFACT_SUFFIX}"
+            _ARTIFACT_PATH="${_GO_ARTIFACT_NAME}${_ARTIFACT_SUFFIX}"
+        fi
     else
-        _ARTIFACT_SUFFIX=".exe"
-        _RELEASE_ARTIFACT_NAME="${_RELEASE_ARTIFACT_NAME}${_ARTIFACT_SUFFIX}"
-        _ARTIFACT_PATH="${_GO_ARTIFACT_NAME}${_ARTIFACT_SUFFIX}"
-    fi
-    else
-    # linux or macos-darwin
-    if [[ "$_EXTRA_FILES" != "" || "$_COMPRESS" = "true" ]]; then
-        _ARTIFACT_SUFFIX=".tgz"
-        _RELEASE_ARTIFACT_NAME="${_RELEASE_ARTIFACT_NAME}${_ARTIFACT_SUFFIX}"
-        _ARTIFACT_PATH="${_RELEASE_ARTIFACT_NAME}${_ARTIFACT_SUFFIX}"
-        tar cvfz "$_ARTIFACT_PATH" ${FILE_LIST} # FILE_LIST unquoted on purpose
-    else
-        _ARTIFACT_SUFFIX=""
-        _RELEASE_ARTIFACT_NAME="${_RELEASE_ARTIFACT_NAME}${_ARTIFACT_SUFFIX}"
-        _ARTIFACT_PATH="${_GO_ARTIFACT_NAME}${_ARTIFACT_SUFFIX}"
-    fi
+        # linux or macos-darwin
+        if [[ "$_EXTRA_FILES" != "" || "$_COMPRESS" = "true" ]]; then
+            _ARTIFACT_SUFFIX=".tgz"
+            _RELEASE_ARTIFACT_NAME="${_RELEASE_ARTIFACT_NAME}${_ARTIFACT_SUFFIX}"
+            _ARTIFACT_PATH="${_RELEASE_ARTIFACT_NAME}${_ARTIFACT_SUFFIX}"
+            tar cvfz "$_ARTIFACT_PATH" ${FILE_LIST} # FILE_LIST unquoted on purpose
+        else
+            _ARTIFACT_SUFFIX=""
+            _RELEASE_ARTIFACT_NAME="${_RELEASE_ARTIFACT_NAME}${_ARTIFACT_SUFFIX}"
+            _ARTIFACT_PATH="${_GO_ARTIFACT_NAME}${_ARTIFACT_SUFFIX}"
+        fi
     fi
     ls -lh
     log_msg "Final artifact is ready - $_ARTIFACT_PATH"
@@ -261,13 +262,13 @@ gh_release(){
     gh_upload_asset "binary" "$_ARTIFACT_PATH"
 
     if [[ "$_PUBILSH_CHECKSUM_SHA256" = "true" ]]; then
-    log_msg "Uploading SHA256 checksum ..."
-    gh_upload_asset "txt" "$_CHECKSUM_SHA256" "sha256.txt"
+        log_msg "Uploading SHA256 checksum ..."
+        gh_upload_asset "txt" "$_CHECKSUM_SHA256" "sha256.txt"
     fi
 
     if [[ "$_PUBILSH_CHECKSUM_MD5" = "true" ]]; then
-    log_msg "Uploading MD5 checksum ..."
-    gh_upload_asset "txt" "$_CHECKSUM_MD5" "md5.txt"
+        log_msg "Uploading MD5 checksum ..."
+        gh_upload_asset "txt" "$_CHECKSUM_MD5" "md5.txt"
     fi
 }
 
