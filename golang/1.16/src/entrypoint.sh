@@ -140,6 +140,15 @@ build(){
   echo "$output"
 }
 
+sync_commit_tag(){
+  local tag_name="$1"
+  local github_repository="$2"
+  local current_commit=""
+  current_commit="$(git rev-parse HEAD)"
+  git tag -f -a "$tag_name" "$current_commit"
+  git push -f "$github_repository" "refs/tags/${tag_name}"
+}
+
 # TODO: Split
 gh_release(){
     log_msg "Event Type: $GITHUB_EVENT_NAME"
@@ -208,6 +217,9 @@ gh_release(){
     log_msg "Target release upload url for assets: ${_UPLOAD_URL}"
 
     version_validation "$RELEASE_NAME"
+
+    log_msg "Syncing release tag and current commit ..."
+    sync_commit_tag "$RELEASE_NAME" "$GITHUB_REPOSITORY"
 
     _PUBILSH_CHECKSUM_SHA256="${PUBILSH_CHECKSUM_SHA256:-"true"}"
     _PUBILSH_CHECKSUM_MD5="${PUBILSH_CHECKSUM_MD5:-"false"}"
