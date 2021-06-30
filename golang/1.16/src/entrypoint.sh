@@ -163,7 +163,7 @@ sync_commit_tag(){
     -H "Authorization: Bearer ${_GH_TOKEN}" \
     -H "Content-Type: application/json" \
     "https://api.github.com/repos/${github_repository}/git/${github_ref}" | jq)"
-  current_sha="$(echo "$response" | jq -cf '.object.sha')"
+  current_sha="$(echo "$response" | jq -cr '.object.sha')"
   if [[ "$current_sha" = "$future_sha" ]]; then
     log_msg "Replacing ${current_sha} tag ${tag_name} with ${future_sha}"
     curl \
