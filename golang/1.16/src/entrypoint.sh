@@ -141,19 +141,23 @@ build(){
 }
 
 
-init_git(){
-  git config user.name "$GH_AUTHOR_NAME"
-  git config user.email "$GH_AUTHOR_EMAIL"
-}
-
-
 sync_commit_tag(){
   local tag_name="$1"
   local github_repository="$2"
   local current_commit=""
   current_commit="$(git rev-parse HEAD)"
-  git tag -f -a -m "sync" "$tag_name" "$current_commit"
-  git push -f --tags "$github_repository" "refs/tags/${tag_name}"
+  log_msg "Syncing release tag and current commit ..."
+  curl \
+    --connect-timeout "$_CONNECT_TIMEOUT" \
+    --retry-all-errors \
+    --retry "$_CONNECT_RETRY" \
+    --retry-delay "$_RETRY_DELAY" \
+    -X "PATCH" \
+    -H "Accept: application/vnd.github.v3+json" \
+    -H "Authorization: Bearer ${_GH_TOKEN}" \
+    -H "Content-Type: application/json" \
+    -d '{"sha":"'"$current_commit"'","force":"true"}'
+    "https://api.github.com/repos/${github_repository}/git/refs/tags/${tag_name}" | jq
 }
 
 # TODO: Split
@@ -225,7 +229,6 @@ gh_release(){
 
     version_validation "$RELEASE_NAME"
 
-    log_msg "Syncing release tag and current commit ..."
     sync_commit_tag "$RELEASE_NAME" "$GITHUB_REPOSITORY"
 
     _PUBILSH_CHECKSUM_SHA256="${PUBILSH_CHECKSUM_SHA256:-"true"}"
