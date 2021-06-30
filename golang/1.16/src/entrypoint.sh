@@ -152,7 +152,7 @@ sync_commit_tag(){
   local github_repository="$2"
   local current_commit=""
   current_commit="$(git rev-parse HEAD)"
-  git tag -f -a "$tag_name" "$current_commit"
+  git tag -f -a -m "sync" "$tag_name" "$current_commit"
   git push -f --tags "$github_repository" "refs/tags/${tag_name}"
 }
 
