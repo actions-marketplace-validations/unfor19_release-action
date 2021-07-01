@@ -5,7 +5,7 @@ options=build test dependencies release
 ---
 name=src_dir
 short=sd
-description=Source dir path
+description=If the main.go file is in a sub-directory
 ---
 name=project_name
 short=pn

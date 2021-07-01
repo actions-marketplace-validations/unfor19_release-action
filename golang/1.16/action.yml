@@ -8,11 +8,11 @@ inputs:
     description: "dependencies, build, test, release"
     required: true
   src-dir:
-    description: "source dir path"
+    description: "If the main.go file is in a sub-directory"
     required: false
     default: "."
   project-name:
-    description: "Set this if the output file name is different from the GitHub repo name"
+    description: "If the output file name is different from the GitHub repo name"
     required: false
     default: ""
   gh-token:
