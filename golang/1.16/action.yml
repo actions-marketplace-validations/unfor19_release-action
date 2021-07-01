@@ -5,7 +5,7 @@ branding:
 description: "Build and Release application in GitHub's ecosystem"
 inputs:
   action:
-    description: "build, test, publish"
+    description: "dependencies, build, test, release"
     required: true
   src-dir:
     description: "source dir path"
