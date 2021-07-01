@@ -6,7 +6,7 @@ This action is tested in [unfor19/release-action-test](https://github.com/unfor1
 
 ## Requirements
 
-A file named `build.sh` at the root folder of the repository. **TODO**: Set a default build process per lang if `build.sh` does not exist
+A file named `build.sh` at the root folder of the repository. If the file does not exist, this action will use a default build process.
 
 An example for `build.sh` in Golang
 
