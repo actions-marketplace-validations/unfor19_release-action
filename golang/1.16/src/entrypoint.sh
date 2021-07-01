@@ -120,26 +120,22 @@ gh_upload_asset(){
 }
 
 
-build(){
+build_app(){
   local project_root="/go/src/github.com/${GITHUB_REPOSITORY}"
-  local output
-  local file_extenstion
+  local file_extenstion=""
+  local artifact_name="${_PROJECT_NAME}"
   mkdir -p "$project_root"
   rmdir "$project_root"
   ln -s "$GITHUB_WORKSPACE" "$project_root"
   cd "$project_root"
   go mod download
-
   file_extenstion=''
 
   if [[ "$GOOS" = 'windows' ]]; then
     file_extenstion='.exe'
   fi
 
-  go build 
-  output="${_PROJECT_NAME}${file_extenstion}"
-
-  echo "$output"
+  go build -o "${artifact_name}${file_extenstion}"
 }
 
 
@@ -349,6 +345,34 @@ if [[ $ACTION = "build" && -f build.sh ]]; then
     fi
     log_msg "Executing build.sh script"
     bash ./build.sh
+    log_msg "Finished building app"
+    ls -lh
+    log_msg "Caching build and modules..."
+    mkdir -p "${GITHUB_WORKSPACE}/.cache-go-build/"
+    mv ~/.cache/go-build/* "${GITHUB_WORKSPACE}/.cache-go-build/"
+    log_msg "Setting ownership of .cache-go-build to 1001:121 ..."
+    chown -R 1001:121 "${GITHUB_WORKSPACE}/.cache-go-build"
+    log_msg "Setting ownership of ${GITHUB_WORKSPACE}/.cache-modules to 1001:121 ..."
+    chown -R 1001:121 "${GITHUB_WORKSPACE}/.cache-modules"
+    ls -lah
+elif [[ $ACTION = "build" && ! -f build.sh ]]; then
+    # TODO: Create build function, the code below was copy-pasted
+    log_msg "Did not find build.sh in root dir, using the default build process"
+    log_msg "Found build.sh file"
+    log_msg "Checking cache dir"
+    if [[ -d "${GITHUB_WORKSPACE}/.cache-modules" ]]; then
+        log_msg "Using ${GITHUB_WORKSPACE}/.cache-modules"
+        mkdir -p /go/pkg/mod
+        ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
+        cp -r "${GITHUB_WORKSPACE}/.cache-modules"/* /go/pkg/mod/
+    fi
+    if [[ -d "${GITHUB_WORKSPACE}/.cache-go-build/" ]]; then
+        log_msg "Cache go-build exists!"
+        mkdir -p ~/.cache/go-build
+        mv "${GITHUB_WORKSPACE}/.cache-go-build/"* ~/.cache/go-build/
+    fi
+    log_msg "Executing default build process"
+    build_app
     log_msg "Finished building app"
     ls -lh
     log_msg "Caching build and modules..."
