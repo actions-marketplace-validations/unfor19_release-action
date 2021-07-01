@@ -298,7 +298,7 @@ gh_release(){
             _ARTIFACT_PATH="${_GO_ARTIFACT_NAME}${_ARTIFACT_SUFFIX}"
         fi
     fi
-    ls -lh
+    ls -lh "$_ARTIFACT_PATH"
     log_msg "Final artifact is ready - $_ARTIFACT_PATH"
 
     _CHECKSUM_MD5=$(md5sum "$_ARTIFACT_PATH" | cut -d ' ' -f 1)
