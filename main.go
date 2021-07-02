@@ -2,11 +2,10 @@ package main
 
 import (
 	"archive/tar"
-	"bufio"
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"html/template"
 	"io"
@@ -31,6 +30,7 @@ var alpineVersion = "3.13"
 var dockerRegistryUserID = "ghcr.io/unfor19"
 var dockerImageName = "release-action"
 var dockerfileBaseName = "Dockerfile.base"
+var dockerGithubServerAddress = "https://ghcr.io"
 
 type ErrorLine struct {
 	Error       string      `json:"error"`
@@ -71,26 +71,9 @@ func readTemplate(filePath string) (*Template, error) {
 	return c, nil
 }
 
-func print(rd io.Reader) error {
-	var lastLine string
-
-	scanner := bufio.NewScanner(rd)
-	for scanner.Scan() {
-		lastLine = scanner.Text()
-		fmt.Println(scanner.Text())
-	}
-
-	errLine := &ErrorLine{}
-	json.Unmarshal([]byte(lastLine), errLine)
-	if errLine.Error != "" {
-		return errors.New(errLine.Error)
-	}
-
-	if err := scanner.Err(); err != nil {
-		return err
-	}
-
-	return nil
+func dockerLogger(rd io.Reader) {
+	termFd, isTerm := term.GetFdInfo(os.Stderr)
+	jsonmessage.DisplayJSONMessagesStream(rd, os.Stderr, termFd, isTerm, nil)
 }
 
 func dockerImageBuild(dockerClient *client.Client, t *LangTemplate) error {
@@ -152,8 +135,25 @@ func dockerImageBuild(dockerClient *client.Client, t *LangTemplate) error {
 		log.Fatal(err, " :unable to build docker image")
 	}
 	defer imageBuildResponse.Body.Close()
-	termFd, isTerm := term.GetFdInfo(os.Stderr)
-	jsonmessage.DisplayJSONMessagesStream(imageBuildResponse.Body, os.Stderr, termFd, isTerm, nil)
+	dockerLogger(imageBuildResponse.Body)
+	return nil
+}
+
+func dockerImagePush(authConfig types.AuthConfig, dockerClient *client.Client, tag string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*120)
+	defer cancel()
+
+	authConfigBytes, _ := json.Marshal(authConfig)
+	authConfigEncoded := base64.URLEncoding.EncodeToString(authConfigBytes)
+
+	opts := types.ImagePushOptions{RegistryAuth: authConfigEncoded}
+	dockerPushResponse, err := dockerClient.ImagePush(ctx, tag, opts)
+	if err != nil {
+		return err
+	}
+
+	defer dockerPushResponse.Close()
+	dockerLogger(dockerPushResponse)
 	return nil
 }
 
@@ -161,6 +161,11 @@ func main() {
 	d, err := readTemplate(templateYmlPath)
 	if err != nil {
 		log.Fatal(err)
+	}
+	authConfig := types.AuthConfig{
+		Username:      os.Getenv("DOCKER_USERNAME"),
+		Password:      os.Getenv("DOCKER_PASSWORD"),
+		ServerAddress: dockerGithubServerAddress,
 	}
 
 	for _, lang := range d.Languages {
@@ -178,6 +183,11 @@ func main() {
 			err = dockerImageBuild(cli, &langTemplate)
 			if err != nil {
 				log.Fatalln("Failed to build docker image", err)
+			}
+			tag := dockerRegistryUserID + dockerImageName + lang.Name + "-" + version
+			err = dockerImagePush(authConfig, cli, tag)
+			if err != nil {
+				log.Fatalln("Failed to push Docker image", err)
 			}
 
 			for _, filePath := range lang.Structure {
