@@ -127,7 +127,7 @@ default_build(){
   mkdir -p "$project_root"
   rmdir "$project_root"
   ln -s "$GITHUB_WORKSPACE" "$project_root"
-  cd "$project_root"
+  cd "${project_root}/${_SRC_DIR}"
   go mod download
   file_extenstion=''
 
