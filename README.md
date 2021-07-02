@@ -100,9 +100,9 @@ jobs:
 ## Actions
 
 1. `dependencies` - Downloads and installs dependencies. Supports using the official [cache](https://github.com/actions/cache). This step is skipped if there's a cache hit.
-2. Build - Builds the artifacts. Supports using the official [cache](https://github.com/actions/cache). The caching mechanism decreases the build time significantly (tested in Golang).
-3. Test - Execute tests
-4. Release
+2. `build` - Builds the artifacts. Supports using the official [cache](https://github.com/actions/cache). The caching mechanism decreases the build time significantly (tested in Golang).
+3. `test` - Execute tests
+4. `release`
    1. On Release `released` - created a new release
       1. Checks if release has assets, if not continue
       2. Uploads build artifacts as release assets, including md5 checksum `.txt` per asset
