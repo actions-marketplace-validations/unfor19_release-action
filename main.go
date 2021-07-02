@@ -29,6 +29,8 @@ var templateSuffix = ".tpl"
 var templateBaseDir = "templates"
 var alpineVersion = "3.13"
 var dockerRegistryUserID = "ghcr.io/unfor19"
+var dockerImageName = "release-action"
+var dockerfileBaseName = "Dockerfile.base"
 
 type ErrorLine struct {
 	Error       string      `json:"error"`
@@ -111,7 +113,7 @@ func dockerImageBuild(dockerClient *client.Client, t *LangTemplate) error {
 	if err != nil {
 		log.Fatalln("Failed to get working dir", err)
 	}
-	dockerfilePath := cwd + "/" + dockerFile
+	dockerfilePath := cwd + "/" + dockerfileBaseName
 	dockerFileReader, err := os.Open(dockerfilePath)
 	if err != nil {
 		log.Fatal(err, " :unable to open Dockerfile")
@@ -135,7 +137,7 @@ func dockerImageBuild(dockerClient *client.Client, t *LangTemplate) error {
 	}
 	dockerFileTarReader := bytes.NewReader(buf.Bytes())
 
-	tags := []string{dockerRegistryUserID + "/release-action:" + t.LangName + "-" + t.LangVersion}
+	tags := []string{dockerRegistryUserID + dockerImageName + t.LangName + "-" + t.LangVersion}
 	imageBuildResponse, err := dockerClient.ImageBuild(
 		ctx,
 		dockerFileTarReader,
