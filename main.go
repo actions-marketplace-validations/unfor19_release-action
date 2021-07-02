@@ -19,6 +19,8 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
+	"github.com/docker/docker/pkg/jsonmessage"
+	"github.com/docker/docker/pkg/term"
 	"gopkg.in/yaml.v3"
 )
 
@@ -147,11 +149,8 @@ func dockerImageBuild(dockerClient *client.Client, t *LangTemplate) error {
 		log.Fatal(err, " :unable to build docker image")
 	}
 	defer imageBuildResponse.Body.Close()
-	_, err = io.Copy(os.Stdout, imageBuildResponse.Body)
-	if err != nil {
-		log.Fatal(err, " :unable to read image build response")
-	}
-
+	termFd, isTerm := term.GetFdInfo(os.Stderr)
+	jsonmessage.DisplayJSONMessagesStream(imageBuildResponse.Body, os.Stderr, termFd, isTerm, nil)
 	return nil
 }
 
