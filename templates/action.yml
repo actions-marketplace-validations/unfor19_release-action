@@ -4,22 +4,31 @@ branding:
   color: "white"
 description: "Build and Release application in GitHub's ecosystem"
 inputs:
-  lang-name:
-    description: "golang, node, etc."
+  action:
+    description: "dependencies, build, test, release"
     required: true
-  lang-version:
-    description: "1.16, 12.14, etc."
-    required: true
-outputs:
-  lang-name:
-    description: ""
-  lang-version:
-    description: ""
+  src-dir:
+    description: "If the main.go file is in a sub-directory"
+    required: false
+    default: "."
+  project-name:
+    description: "If the output file name is different from the GitHub repo name"
+    required: false
+    default: ""
+  gh-token:
+    description: "GitHub Personal Access token for uploading release assets, defaults to GITHUB_TOKEN"
+    required: false
+    default: ""
+
 runs:
   using: "docker"
   image: Dockerfile
   args:
-    - --lang_name
-    - "${{ inputs.lang-name }}"
-    - --lang_version
-    - "${{ inputs.lang-version }}"
+    - --action
+    - "${{ inputs.action }}"
+    - --src_dir
+    - "${{ inputs.src-dir }}"
+    - --project_name
+    - "${{ inputs.project-name }}"
+    - --gh_token
+    - "${{ inputs.gh-token }}"

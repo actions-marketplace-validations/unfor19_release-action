@@ -1,18 +1,24 @@
 ---
-name=lang_name
-short=ln
-description=Language name: golang, node, etc.
----
-name=lang_version
-short=lv
-description=Language version: 1.16, 12.14, etc.
----
 name=action
 short=a
-options=build test publish dependencies
+options=build test dependencies release
+---
+name=src_dir
+short=sd
+description=If the main.go file is in a sub-directory
+---
+name=project_name
+short=pn
+description=Usually the name of the GitHub repo
+default=$(basename $GITHUB_REPOSITORY)
+---
+name=gh_token
+short=gt
+description=GitHub Personal Access token for uploading release assets
+default="false"
 ---
 name=bargs
-description=bash entrypoint.sh --lang_name golang --lang_version 1.16
+description=bash entrypoint.sh --help
 default=irrelevant
 ---
 ---
