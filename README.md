@@ -65,8 +65,8 @@ jobs:
           path: |
             .cache-modules
             .cache-go-build
-          # CHANGE the path to go.sum
-          key: ${{ runner.os }}-golang-${{ matrix.GOOS }}-${{ matrix.GOARCH }}-${{ hashFiles('golang/go.sum') }}-v1
+          # Purge cache by changing v1 to v2, and so on
+          key: ${{ runner.os }}-golang-${{ matrix.GOOS }}-${{ matrix.GOARCH }}-${{ hashFiles('**/go.sum') }}-v1
           restore-keys: |
             ${{ runner.os }}-golang-${{ matrix.GOOS }}-${{ matrix.GOARCH }}-
       - name: Get Dependencies
