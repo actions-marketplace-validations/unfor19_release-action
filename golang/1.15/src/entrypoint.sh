@@ -334,7 +334,7 @@ restore_build_cache(){
     if [[ -d "${GITHUB_WORKSPACE}/.cache-go-build/" ]]; then
         log_msg "Cache go-build exists!"
         mkdir -p ~/.cache/go-build
-        mv "${GITHUB_WORKSPACE}/.cache-go-build/"* ~/.cache/go-build/
+        cp -r "${GITHUB_WORKSPACE}/.cache-go-build/"* ~/.cache/go-build/
     else
         log_msg "Cache dir does not exist - ${GITHUB_WORKSPACE}/.cache-go-build/"
     fi
