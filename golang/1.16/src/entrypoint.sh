@@ -395,6 +395,7 @@ elif [[ $ACTION = "test" ]]; then
     [[ "$_SRC_DIR" ]] && cd "$_SRC_DIR"
     log_msg "Checking cache dir"
     restore_dependencies_cache
+    restore_build_cache
     unset GOOS GOARCH # Avoids errors on arm64 builds
     go test -v
 elif [[ $ACTION = "dependencies" ]]; then
