@@ -349,8 +349,8 @@ build_app(){
         log_msg "Did not find build.sh in root dir, using the default build process"
         default_build
     fi
-    log_msg "Finished building app"
     ls -lh
+    log_msg "Finished building app"
 }
 
 cache_dependencies(){
