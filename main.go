@@ -108,7 +108,7 @@ func dockerImageBuild(dockerClient *client.Client, t *LangTemplate) error {
 		"LANG_IMAGE":     &langBaseImage,
 		"ALPINE_VERSION": &alpineVersion,
 	}
-	dockerFile := "Dockerfile.base"
+	dockerFile := dockerfileBaseName
 	cwd, err := os.Getwd()
 	if err != nil {
 		log.Fatalln("Failed to get working dir", err)
