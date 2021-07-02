@@ -30,7 +30,6 @@ var alpineVersion = "3.13"
 var dockerRegistryUserID = "ghcr.io/unfor19"
 var dockerImageName = "release-action"
 var dockerfileBaseName = "Dockerfile.base"
-var dockerGithubServerAddress = "https://ghcr.io"
 
 type ErrorLine struct {
 	Error       string      `json:"error"`
@@ -120,7 +119,7 @@ func dockerImageBuild(dockerClient *client.Client, t *LangTemplate) error {
 	}
 	dockerFileTarReader := bytes.NewReader(buf.Bytes())
 
-	tags := []string{dockerRegistryUserID + dockerImageName + t.LangName + "-" + t.LangVersion}
+	tags := []string{dockerRegistryUserID + "/" + dockerImageName + ":" + t.LangName + "-" + t.LangVersion}
 	imageBuildResponse, err := dockerClient.ImageBuild(
 		ctx,
 		dockerFileTarReader,
@@ -149,6 +148,7 @@ func dockerImagePush(authConfig types.AuthConfig, dockerClient *client.Client, t
 	opts := types.ImagePushOptions{RegistryAuth: authConfigEncoded}
 	dockerPushResponse, err := dockerClient.ImagePush(ctx, tag, opts)
 	if err != nil {
+		log.Fatalln("Failed to push Docker image", err)
 		return err
 	}
 
@@ -163,9 +163,8 @@ func main() {
 		log.Fatal(err)
 	}
 	authConfig := types.AuthConfig{
-		Username:      os.Getenv("DOCKER_USERNAME"),
-		Password:      os.Getenv("DOCKER_PASSWORD"),
-		ServerAddress: dockerGithubServerAddress,
+		Username: "oauth2accesstoken",
+		Password: os.Getenv("DOCKER_TOKEN"),
 	}
 
 	for _, lang := range d.Languages {
@@ -184,7 +183,7 @@ func main() {
 			if err != nil {
 				log.Fatalln("Failed to build docker image", err)
 			}
-			tag := dockerRegistryUserID + dockerImageName + lang.Name + "-" + version
+			tag := dockerRegistryUserID + "/" + dockerImageName + ":" + lang.Name + "-" + version
 			err = dockerImagePush(authConfig, cli, tag)
 			if err != nil {
 				log.Fatalln("Failed to push Docker image", err)
