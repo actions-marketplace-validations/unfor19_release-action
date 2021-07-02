@@ -1,0 +1,12 @@
+languages:
+  - name: golang
+    versions:
+      - "1.15"
+      - "1.16"
+    structure:
+      - src/bargs_vars
+      - src/bargs.sh
+      - src/entrypoint.sh
+      - action.yml
+      - Dockerfile.tpl
+      - .dockerignore

@@ -1,3 +1,9 @@
 .*
 !.*ignore*
 !.github/
+
+# artifacts
+release-action
+*.tgz
+*.tar*
+*.zip
