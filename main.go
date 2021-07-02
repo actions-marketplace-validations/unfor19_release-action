@@ -24,6 +24,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+var templateYmlPath = "templates/templates.yml"
 var templateSuffix = ".tpl"
 var templateBaseDir = "templates"
 var alpineVersion = "3.13"
@@ -155,7 +156,7 @@ func dockerImageBuild(dockerClient *client.Client, t *LangTemplate) error {
 }
 
 func main() {
-	d, err := readTemplate("templates/templates.yml")
+	d, err := readTemplate(templateYmlPath)
 	if err != nil {
 		log.Fatal(err)
 	}
