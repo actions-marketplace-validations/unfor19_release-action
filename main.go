@@ -203,7 +203,7 @@ func main() {
 					cleanFileName = strings.ReplaceAll(filePath, templateSuffix, "")
 				}
 
-				os.MkdirAll(dirPath, 0744)
+				os.MkdirAll(dirPath, 0755)
 				data, err := ioutil.ReadFile(templateBaseDir + "/" + filePath)
 				if err != nil {
 					log.Fatalln(err)
@@ -212,6 +212,7 @@ func main() {
 				outputFilePath := dirPath + "/" + cleanFileName
 
 				outputFile, err := os.Create(outputFilePath)
+				outputFile.Chmod(0755)
 				defer outputFile.Close()
 				if err != nil {
 					log.Fatalln("Error creating output file", err)
