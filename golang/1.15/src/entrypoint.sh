@@ -366,7 +366,7 @@ cache_dependencies(){
 cache_build(){
     log_msg "Caching build..."
     mkdir -p "${GITHUB_WORKSPACE}/.cache-go-build/"
-    mv ~/.cache/go-build/* "${GITHUB_WORKSPACE}/.cache-go-build/"
+    cp -r ~/.cache/go-build/* "${GITHUB_WORKSPACE}/.cache-go-build/"
     log_msg "Setting ownership of .cache-go-build to 1001:121 ..."
     chown -R 1001:121 "${GITHUB_WORKSPACE}/.cache-go-build"
     ls -lah
