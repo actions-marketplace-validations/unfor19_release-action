@@ -3,6 +3,7 @@ languages:
     versions:
       - "1.15"
       - "1.16"
+      - "1.17beta1"
     structure:
       - src/bargs_vars
       - src/bargs.sh
