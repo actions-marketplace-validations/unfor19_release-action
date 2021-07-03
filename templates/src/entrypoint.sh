@@ -358,7 +358,8 @@ build_app(){
 cache_dependencies(){
   log_msg "Caching dependencies..."
   mkdir -p "${GITHUB_WORKSPACE}/.cache-modules"
-  cp -r /go/pkg/mod/* "${GITHUB_WORKSPACE}/.cache-modules"
+  # cp -r /go/pkg/mod/* "${GITHUB_WORKSPACE}/.cache-modules"
+  mv /go/pkg/mod/* "${GITHUB_WORKSPACE}/.cache-modules"
   log_msg "Setting ownership of ${GITHUB_WORKSPACE}/.cache-modules to 1001:121 ..."
   chown -R 1001:121 "${GITHUB_WORKSPACE}/.cache-modules"
   ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
