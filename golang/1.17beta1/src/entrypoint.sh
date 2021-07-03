@@ -388,12 +388,14 @@ _PROJECT_NAME="${PROJECT_NAME:-"$(basename "$GITHUB_REPOSITORY")"}"
 log_msg "Project Name: ${_PROJECT_NAME}"
 log_msg "Source Dir: ${_SRC_DIR}"
 if [[ $ACTION = "build" ]]; then
+    ls -lh
     restore_dependencies_cache
     restore_build_cache
     build_app
     cache_build
 elif [[ $ACTION = "test" ]]; then
     [[ "$_SRC_DIR" ]] && cd "$_SRC_DIR"
+    ls -lh
     log_msg "Checking cache dir"
     restore_dependencies_cache
     restore_build_cache
@@ -404,7 +406,9 @@ elif [[ $ACTION = "test" ]]; then
     log_msg "Finished testing"
 elif [[ $ACTION = "dependencies" ]]; then
     log_msg "Getting dependencies ..."
+    ls -lh
     [[ "$_SRC_DIR" ]] && cd "$_SRC_DIR"
+    ls -lh
     go mod download # -json
     log_msg "Finished downloading dependencies"
     cache_dependencies
