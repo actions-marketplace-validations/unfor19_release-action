@@ -119,6 +119,7 @@ Downloads and installs dependencies. Supports using the official [cache](https:/
 ```yaml
 with:
   action: build
+  build-script-path: ""
 ```
 
 #### Description
@@ -127,9 +128,9 @@ Builds the artifacts. Supports using the official [cache](https://github.com/act
 
 #### Behavior
 
-Attempts to find `build.sh` at the root folder of the repository. If the file does not exist, this action will use a default build process.
+Attempts to find `build-script-path`, if the file exists it will be executed. If the file does not exist, this action will use a default build process.
 
-An example for `build.sh` in Golang
+An example for a build script in Golang
 
 ```bash
 #!/bin/bash
