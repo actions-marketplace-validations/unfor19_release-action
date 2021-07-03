@@ -18,7 +18,7 @@ inputs:
   gh-token:
     description: "GitHub Personal Access token for uploading release assets, defaults to GITHUB_TOKEN"
     required: false
-    default: ""
+    default: "false"
 
 runs:
   using: "docker"
