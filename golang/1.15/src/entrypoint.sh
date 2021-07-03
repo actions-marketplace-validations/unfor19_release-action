@@ -385,7 +385,8 @@ _GH_TOKEN="${GH_TOKEN:-""}"
 log_msg "Running as $(whoami)"
 _SRC_DIR="${SRC_DIR:-""}"
 _PROJECT_NAME="${PROJECT_NAME:-"$(basename "$GITHUB_REPOSITORY")"}"
-log_msg "Project Name: $_PROJECT_NAME"
+log_msg "Project Name: ${_PROJECT_NAME}"
+log_msg "Source Dir: ${_SRC_DIR}"
 if [[ $ACTION = "build" ]]; then
     restore_dependencies_cache
     restore_build_cache
