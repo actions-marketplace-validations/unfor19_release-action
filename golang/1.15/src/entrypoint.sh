@@ -185,12 +185,12 @@ sync_commit_tag(){
 # TODO: Split
 gh_release(){
     log_msg "Event Type: $GITHUB_EVENT_NAME"
-    if [[ "$_PRE_RELEASE" = "true" || "$GITHUB_EVENT_NAME" = "push" ]]; then
+    if [[ "$_PRE_RELEASE" = "true" || "$GITHUB_EVENT_NAME" = "push" || "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]]; then
         log_msg "Will publish as PRE-RELEASE"
         _PRE_RELEASE_FLAG="--prerelease"
     fi
 
-    if [[ "$_OVERWRITE_RELEASE" = "true" || "$GITHUB_EVENT_NAME" = "push" ]]; then
+    if [[ "$_OVERWRITE_RELEASE" = "true" || "$GITHUB_EVENT_NAME" = "push" || "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]]; then
         log_msg "Will overwrite existing assets if any"
         _OVERWRITE_RELEASE="true"
     fi
@@ -358,7 +358,8 @@ build_app(){
 cache_dependencies(){
   log_msg "Caching dependencies..."
   mkdir -p "${GITHUB_WORKSPACE}/.cache-modules"
-  cp -r /go/pkg/mod/* "${GITHUB_WORKSPACE}/.cache-modules"
+  # cp -r /go/pkg/mod/* "${GITHUB_WORKSPACE}/.cache-modules"
+  mv /go/pkg/mod/* "${GITHUB_WORKSPACE}/.cache-modules"
   log_msg "Setting ownership of ${GITHUB_WORKSPACE}/.cache-modules to 1001:121 ..."
   chown -R 1001:121 "${GITHUB_WORKSPACE}/.cache-modules"
   ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
