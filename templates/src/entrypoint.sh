@@ -322,7 +322,9 @@ restore_dependencies_cache(){
         log_msg "Using ${GITHUB_WORKSPACE}/.cache-modules"
         mkdir -p /go/pkg/mod
         ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
-        cp -r "${GITHUB_WORKSPACE}/.cache-modules"/* /go/pkg/mod/
+        cd "${GITHUB_WORKSPACE}/.cache-modules"
+        tar cf - . | pv | (cd /go/pkg/mod/; tar xf -)
+        cd -
     else
         log_msg "Cache dir does not exist - ${GITHUB_WORKSPACE}/.cache-modules/"
     fi
@@ -334,7 +336,9 @@ restore_build_cache(){
     if [[ -d "${GITHUB_WORKSPACE}/.cache-go-build/" ]]; then
         log_msg "Cache go-build exists!"
         mkdir -p ~/.cache/go-build
-        cp -r "${GITHUB_WORKSPACE}/.cache-go-build/"* ~/.cache/go-build/
+        cd "${GITHUB_WORKSPACE}/.cache-go-build"
+        tar cf - . | pv | (cd ~/.cache/go-build/; tar xf -)
+        cd -
     else
         log_msg "Cache dir does not exist - ${GITHUB_WORKSPACE}/.cache-go-build/"
     fi
