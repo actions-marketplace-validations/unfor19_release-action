@@ -185,12 +185,12 @@ sync_commit_tag(){
 # TODO: Split
 gh_release(){
     log_msg "Event Type: $GITHUB_EVENT_NAME"
-    if [[ "$_PRE_RELEASE" = "true" || "$GITHUB_EVENT_NAME" = "push" ]]; then
+    if [[ "$_PRE_RELEASE" = "true" || "$GITHUB_EVENT_NAME" = "push" || "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]]; then
         log_msg "Will publish as PRE-RELEASE"
         _PRE_RELEASE_FLAG="--prerelease"
     fi
 
-    if [[ "$_OVERWRITE_RELEASE" = "true" || "$GITHUB_EVENT_NAME" = "push" ]]; then
+    if [[ "$_OVERWRITE_RELEASE" = "true" || "$GITHUB_EVENT_NAME" = "push" || "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]]; then
         log_msg "Will overwrite existing assets if any"
         _OVERWRITE_RELEASE="true"
     fi
