@@ -343,10 +343,12 @@ restore_build_cache(){
 
 build_app(){
     if [[ -f build.sh ]]; then
-        log_msg "Executing build.sh script"
+        log_msg "Build With: build.sh"
+        log_msg "Building..."
         bash ./build.sh
     else
-        log_msg "Did not find build.sh in root dir, using the default build process"
+        log_msg "Build With: Default"
+        log_msg "Building..."
         default_build
     fi
     ls -lh
