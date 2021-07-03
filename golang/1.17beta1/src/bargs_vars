@@ -6,16 +6,19 @@ options=build test dependencies release
 name=src_dir
 short=sd
 description=If the main.go file is in a sub-directory
+allow_env_var=true
 ---
 name=project_name
 short=pn
 description=Usually the name of the GitHub repo
 default=$(basename $GITHUB_REPOSITORY)
+allow_env_var=true
 ---
 name=gh_token
 short=gt
 description=GitHub Personal Access token for uploading release assets
 default="false"
+allow_env_var=true
 ---
 name=bargs
 description=bash entrypoint.sh --help
