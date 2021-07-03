@@ -342,10 +342,10 @@ restore_build_cache(){
 }
 
 build_app(){
-    if [[ -f build.sh ]]; then
-        log_msg "Build With: build.sh"
+    if [[ -z "$_BUILD_SCRIPT_PATH" && "$_BUILD_SCRIPT_PATH" != "false" && -f "$_BUILD_SCRIPT_PATH" ]]; then
+        log_msg "Build With: ${_BUILD_SCRIPT_PATH}"
         log_msg "Building..."
-        bash ./build.sh
+        bash "$_BUILD_SCRIPT_PATH"
     else
         log_msg "Build With: Default"
         log_msg "Building..."
@@ -383,6 +383,7 @@ _CONNECT_RETRY="${_CONNECT_RETRY:-"3"}"
 _RETRY_DELAY="${RETRY_DELAY:-"20"}"
 _OVERWRITE_RELEASE="${OVERWRITE_RELEASE:-""}"
 _GH_TOKEN="${GH_TOKEN:-""}"
+_BUILD_SCRIPT_PATH="${BUILD_SCRIPT_PATH:-"false"}"
 
 log_msg "Running as $(whoami)"
 _SRC_DIR="${SRC_DIR:-""}"

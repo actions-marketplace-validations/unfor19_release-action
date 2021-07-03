@@ -15,6 +15,10 @@ inputs:
     description: "If the output file name is different from the GitHub repo name"
     required: false
     default: ""
+  build-script-path:
+    description: "Path of the script to execute in the build action"
+    default: "false"
+    required: false
   gh-token:
     description: "GitHub Personal Access token for uploading release assets, defaults to GITHUB_TOKEN"
     required: false
@@ -32,3 +36,5 @@ runs:
     - "${{ inputs.project-name }}"
     - --gh_token
     - "${{ inputs.gh-token }}"
+    - --build_script_path
+    - "${{ inputs.build-script-path }}"
