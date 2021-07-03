@@ -323,7 +323,7 @@ restore_dependencies_cache(){
         mkdir -p /go/pkg/mod
         ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
         cd "${GITHUB_WORKSPACE}/.cache-modules"
-        tar cf - . | pv | (cd /go/pkg/mod/; tar xf -)
+        tar cf - . | (cd /go/pkg/mod/; tar xf -)
         cd -
     else
         log_msg "Cache dir does not exist - ${GITHUB_WORKSPACE}/.cache-modules/"
@@ -337,7 +337,7 @@ restore_build_cache(){
         log_msg "Cache go-build exists!"
         mkdir -p ~/.cache/go-build
         cd "${GITHUB_WORKSPACE}/.cache-go-build"
-        tar cf - . | pv | (cd ~/.cache/go-build/; tar xf -)
+        tar cf - . | (cd ~/.cache/go-build/; tar xf -)
         cd -
     else
         log_msg "Cache dir does not exist - ${GITHUB_WORKSPACE}/.cache-go-build/"
@@ -362,7 +362,6 @@ build_app(){
 cache_dependencies(){
   log_msg "Caching dependencies..."
   mkdir -p "${GITHUB_WORKSPACE}/.cache-modules"
-  # cp -r /go/pkg/mod/* "${GITHUB_WORKSPACE}/.cache-modules"
   mv /go/pkg/mod/* "${GITHUB_WORKSPACE}/.cache-modules"
   log_msg "Setting ownership of ${GITHUB_WORKSPACE}/.cache-modules to 1001:121 ..."
   chown -R 1001:121 "${GITHUB_WORKSPACE}/.cache-modules"
@@ -373,7 +372,9 @@ cache_dependencies(){
 cache_build(){
     log_msg "Caching build..."
     mkdir -p "${GITHUB_WORKSPACE}/.cache-go-build/"
-    cp -r ~/.cache/go-build/* "${GITHUB_WORKSPACE}/.cache-go-build/"
+    cd ~/.cache/go-build/
+    tar cf - . | (cd "${GITHUB_WORKSPACE}/.cache-go-build"; tar xf -)
+    cd -
     log_msg "Setting ownership of .cache-go-build to 1001:121 ..."
     chown -R 1001:121 "${GITHUB_WORKSPACE}/.cache-go-build"
     ls -lah
