@@ -412,6 +412,8 @@ elif [[ $ACTION = "test" ]]; then
     if [[ -z "$_TEST_FILES" ]]; then
       log_msg "No *_test.go files in this repo, skipping tests"
     else
+      log_msg "Found tests files"
+      echo "${_TEST_FILES[*]}"
       log_msg "Checking cache dir"
       restore_dependencies_cache
       restore_build_cache
