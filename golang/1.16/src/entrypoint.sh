@@ -421,7 +421,7 @@ elif [[ $ACTION = "test" ]]; then
       unset GOOS GOARCH # Avoids errors on arm64 builds
       log_msg "Testing..."
       # go test ./... -v 2>&1 | go-junit-report > "${_TEST_RESULTS_PATH}"
-      go test ./.. -json | go-test-report
+      go test ./... -json | go-test-report
       log_msg "Test results"
       ls -lh "${_TEST_RESULTS_PATH}"
       cache_build
