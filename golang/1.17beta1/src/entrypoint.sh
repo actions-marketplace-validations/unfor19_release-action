@@ -317,9 +317,9 @@ gh_release(){
 }
 
 restore_dependencies_cache(){
-    log_msg "Restoring cache dirs ..."
     if [[ -d "${GITHUB_WORKSPACE}/.cache-modules/" ]]; then
-        log_msg "Using ${GITHUB_WORKSPACE}/.cache-modules"
+        log_msg "Found ${GITHUB_WORKSPACE}/.cache-modules"
+        log_msg "Restoring cache dirs ..."
         mkdir -p /go/pkg/mod
         ls -lh "${GITHUB_WORKSPACE}/.cache-modules"
         cd "${GITHUB_WORKSPACE}/.cache-modules"
@@ -415,7 +415,6 @@ elif [[ $ACTION = "test" ]]; then
     else
       log_msg "Found tests files"
       echo "${_TEST_FILES[*]}"
-      log_msg "Restoring cache dirs ..."
       restore_dependencies_cache
       restore_build_cache
       unset GOOS GOARCH # Avoids errors on arm64 builds
