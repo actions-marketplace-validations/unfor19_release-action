@@ -27,10 +27,61 @@ on:
   release:
     types:
       - released # does not include pre-release
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to set as prerelease"
+        required: false
+        default: "master"
+
 jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@master
+      - name: Cache Go Build
+        id: cache-go-build
+        uses: actions/cache@v2
+        with:
+          path: |
+            .cache-go-build
+          key: ${{ runner.os }}-go-build-test-${{ hashFiles('**/go.sum') }}-app-v2
+          restore-keys: |
+            ${{ runner.os }}-go-build-test-${{ hashFiles('**/go.sum') }}-app-v2
+      - name: Cache Go Modules
+        id: cache-go-modules
+        uses: actions/cache@v2
+        with:
+          path: |
+            .cache-modules
+          key: ${{ runner.os }}-go-modules-test-${{ hashFiles('**/go.sum') }}-app-v2
+          restore-keys: |
+            ${{ runner.os }}-go-modules-test-${{ hashFiles('**/go.sum') }}-app-v2
+      - name: Get Dependencies
+        if: steps.cache-go-modules.outputs.cache-hit != 'true'
+        uses: unfor19/release-action/golang/1.16@master
+        with:
+          action: dependencies
+          src-dir: golang
+          project-name: app
+      - name: Go Test
+        uses: unfor19/release-action/golang/1.16@master
+        with:
+          action: test
+          src-dir: golang
+          project-name: app
+      - name: Upload Test Results As Artifact
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: test_report
+          path: test_report.html
   release:
     name: Release
     runs-on: ubuntu-20.04
+    needs:
+      - test
     strategy:
       matrix:
         include:
@@ -42,8 +93,6 @@ jobs:
             GOOS: "linux"
           - GOARCH: "amd64"
             GOOS: "darwin"
-          - GOARCH: "arm64"
-            GOOS: "darwin"
           - GOARCH: "amd64"
             GOOS: "windows"
     env:
@@ -51,18 +100,24 @@ jobs:
       GOARCH: ${{ matrix.GOARCH }}
     steps:
       - uses: actions/checkout@master
-      - name: Cache Go Build and Modules
+      - name: Cache Go Build
+        id: cache-go-build
+        uses: actions/cache@v2
+        with:
+          path: |
+            .cache-go-build
+          key: ${{ runner.os }}-go-build-${{ matrix.GOOS }}-${{ matrix.GOARCH }}-${{ hashFiles('**/go.sum') }}-app-v2
+          restore-keys: |
+            ${{ runner.os }}-go-build-${{ matrix.GOOS }}-${{ matrix.GOARCH }}-${{ hashFiles('**/go.sum') }}-app-v2
+      - name: Cache Go Modules
         id: cache-go-modules
         uses: actions/cache@v2
         with:
-          # Don't change the paths
           path: |
             .cache-modules
-            .cache-go-build
-          # Purge cache by changing v1 to v2, and so on
-          key: ${{ runner.os }}-golang-${{ matrix.GOOS }}-${{ matrix.GOARCH }}-${{ hashFiles('**/go.sum') }}-v1
+          key: ${{ runner.os }}-go-modules-${{ matrix.GOOS }}-${{ matrix.GOARCH }}-${{ hashFiles('**/go.sum') }}-app-v2
           restore-keys: |
-            ${{ runner.os }}-golang-${{ matrix.GOOS }}-${{ matrix.GOARCH }}-
+            ${{ runner.os }}-go-modules-${{ matrix.GOOS }}-${{ matrix.GOARCH }}-${{ hashFiles('**/go.sum') }}-app-v2
       - name: Get Dependencies
         if: steps.cache-go-modules.outputs.cache-hit != 'true'
         uses: unfor19/release-action/golang/1.16@master
@@ -74,12 +129,6 @@ jobs:
         uses: unfor19/release-action/golang/1.16@master
         with:
           action: build
-          src-dir: golang
-          project-name: app
-      - name: Go Test
-        uses: unfor19/release-action/golang/1.16@master
-        with:
-          action: test
           src-dir: golang
           project-name: app
       - name: Release
