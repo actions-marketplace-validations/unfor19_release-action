@@ -407,13 +407,19 @@ if [[ $ACTION = "build" ]]; then
 elif [[ $ACTION = "test" ]]; then
     [[ "$_SRC_DIR" ]] && cd "$_SRC_DIR"
     ls -lh
-    log_msg "Checking cache dir"
-    restore_dependencies_cache
-    restore_build_cache
-    unset GOOS GOARCH # Avoids errors on arm64 builds
-    log_msg "Testing..."
-    go test -v
-    cache_build
+    log_msg "Checking for *_test.go files ..."
+    _TEST_FILES="$(find . -type f -name *_test.go)"
+    if [[ -z "$_TEST_FILES" ]]; then
+      log_msg "No *_test.go files in this repo, skipping tests"
+    else
+      log_msg "Checking cache dir"
+      restore_dependencies_cache
+      restore_build_cache
+      unset GOOS GOARCH # Avoids errors on arm64 builds
+      log_msg "Testing..."
+      go test -v
+      cache_build
+    fi
     log_msg "Finished testing"
 elif [[ $ACTION = "dependencies" ]]; then
     log_msg "Getting dependencies ..."
