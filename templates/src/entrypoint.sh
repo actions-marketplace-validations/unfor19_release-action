@@ -317,7 +317,7 @@ gh_release(){
 }
 
 restore_dependencies_cache(){
-    log_msg "Checking dependencies cache dir"
+    log_msg "Restoring cache dirs ..."
     if [[ -d "${GITHUB_WORKSPACE}/.cache-modules/" ]]; then
         log_msg "Using ${GITHUB_WORKSPACE}/.cache-modules"
         mkdir -p /go/pkg/mod
@@ -414,12 +414,12 @@ elif [[ $ACTION = "test" ]]; then
     else
       log_msg "Found tests files"
       echo "${_TEST_FILES[*]}"
-      log_msg "Checking cache dir"
+      log_msg "Restoring cache dirs ..."
       restore_dependencies_cache
       restore_build_cache
       unset GOOS GOARCH # Avoids errors on arm64 builds
       log_msg "Testing..."
-      go test -v
+      go test ./... -v 2>&1 | go-junit-report > report.xml
       cache_build
     fi
     log_msg "Finished testing"
