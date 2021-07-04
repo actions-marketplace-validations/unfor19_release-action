@@ -19,6 +19,10 @@ inputs:
     description: "Path of the script to execute in the build action"
     default: "false"
     required: false
+  test-results-path:
+    description: Test results output file path
+    default: ""
+    required: false
   gh-token:
     description: "GitHub Personal Access token for uploading release assets, defaults to GITHUB_TOKEN"
     required: false
@@ -38,3 +42,5 @@ runs:
     - "${{ inputs.gh-token }}"
     - --build_script_path
     - "${{ inputs.build-script-path }}"
+    - --test_results_path
+    - "${{ inputs.test-results-path }}"

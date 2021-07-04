@@ -18,6 +18,11 @@ short=bsp
 description=Path of the script to execute in the build action
 default="false"
 ---
+name=test_results_path
+short=trp
+description=Test results output file path
+default="${GITHUB_WORKSPACE}/test-results.xml"
+---
 name=gh_token
 short=gt
 description=GitHub Personal Access token for uploading release assets
