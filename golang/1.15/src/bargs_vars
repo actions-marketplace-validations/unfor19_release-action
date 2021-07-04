@@ -21,7 +21,7 @@ default="false"
 name=test_results_path
 short=trp
 description=Test results output file path
-default="${GITHUB_WORKSPACE}/test-results.xml"
+default="${GITHUB_WORKSPACE}/test_report.html"
 ---
 name=gh_token
 short=gt

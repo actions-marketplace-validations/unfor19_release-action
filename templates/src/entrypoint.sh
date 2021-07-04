@@ -392,7 +392,7 @@ _RETRY_DELAY="${RETRY_DELAY:-"20"}"
 _OVERWRITE_RELEASE="${OVERWRITE_RELEASE:-""}"
 _GH_TOKEN="${GH_TOKEN:-""}"
 _BUILD_SCRIPT_PATH="${BUILD_SCRIPT_PATH:-"false"}"
-_TEST_RESULTS_PATH="${TEST_RESULTS_PATH:-"${GITHUB_WORKSPACE}/test-results.xml"}"
+_TEST_RESULTS_PATH="${TEST_RESULTS_PATH:-"${GITHUB_WORKSPACE}/test_report.html"}"
 
 log_msg "Running as $(whoami)"
 _SRC_DIR="${SRC_DIR:-""}"
@@ -420,7 +420,8 @@ elif [[ $ACTION = "test" ]]; then
       restore_build_cache
       unset GOOS GOARCH # Avoids errors on arm64 builds
       log_msg "Testing..."
-      go test ./... -v 2>&1 | go-junit-report > "${_TEST_RESULTS_PATH}"
+      # go test ./... -v 2>&1 | go-junit-report > "${_TEST_RESULTS_PATH}"
+      go test ./.. -json | go-test-report
       log_msg "Test results"
       ls -lh "${_TEST_RESULTS_PATH}"
       cache_build
