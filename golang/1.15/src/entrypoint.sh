@@ -430,6 +430,14 @@ elif [[ $ACTION = "test" ]]; then
       log_msg "Test results"
       ls -lh "${_TEST_RESULTS_PATH}"
       cache_build
+      _NUM_FAILED_TESTS="$(grep 'Failed: <strong>[0-9]*</strong>' test_report.html | tr -d "<strong>" | tr -d / | rev | cut -d" " -f1 | rev)"
+      if [[ "$_NUM_FAILED_TESTS" -eq 0 ]]; then
+        log_msg "Successfully passed all tests"
+      elif [[ "$_NUM_FAILED_TESTS" -gt 0 ]]; then
+        error_msg "Failed tests: $_NUM_FAILED_TESTS"
+      else
+        error_msg "Unknown number of failed tests: $_NUM_FAILED_TESTS"
+      fi
     fi
     log_msg "Finished testing"
 elif [[ $ACTION = "dependencies" ]]; then
