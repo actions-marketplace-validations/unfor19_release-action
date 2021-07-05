@@ -390,6 +390,11 @@ cache_build(){
     log_msg "Finished caching build"
 }
 
+get_test_result_num(){
+  local str="$1"
+  grep ''"${str}"': <strong>[0-9]*</strong>' "$_TEST_RESULTS_PATH" | tr -d "<strong>" | tr -d / | rev | cut -d" " -f1 | rev
+}
+
 
 _PRE_RELEASE="${PRE_RELEASE:-""}"
 _PRE_RELEASE_FLAG=""
@@ -430,9 +435,9 @@ elif [[ $ACTION = "test" ]]; then
       go test ./... -json | go-test-report -o "${_TEST_RESULTS_PATH}"
       log_msg "Test results"
       ls -lh "${_TEST_RESULTS_PATH}"
-      _NUM_PASSED_TESTS="$(grep 'Passed: <strong>[0-9]*</strong>' "$_TEST_RESULTS_PATH" | tr -d "<strong>" | tr -d / | rev | cut -d" " -f1 | rev)"
-      _NUM_SKIPPED_TESTS="$(grep 'Skipped: <strong>[0-9]*</strong>' "$_TEST_RESULTS_PATH" | tr -d "<strong>" | tr -d / | rev | cut -d" " -f1 | rev)"
-      _NUM_FAILED_TESTS="$(grep 'Failed: <strong>[0-9]*</strong>' "$_TEST_RESULTS_PATH" | tr -d "<strong>" | tr -d / | rev | cut -d" " -f1 | rev)"
+      _NUM_PASSED_TESTS="$(get_test_result_num "Passed:")"
+      _NUM_SKIPPED_TESTS="$(get_test_result_num "Skipped:")"
+      _NUM_FAILED_TESTS="$(get_test_result_num "Failed:")"
       log_msg "Passed: ${_NUM_PASSED_TESTS}"
       log_msg "Skipped: ${_NUM_SKIPPED_TESTS}"
       log_msg "Failed: ${_NUM_FAILED_TESTS}"
