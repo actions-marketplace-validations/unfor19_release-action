@@ -1,4 +1,4 @@
-name: "release-action"
+name: "releaser-action"
 branding:
   icon: "align-justify"
   color: "white"
