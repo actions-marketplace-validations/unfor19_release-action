@@ -412,6 +412,8 @@ _SRC_DIR="${SRC_DIR:-""}"
 _PROJECT_NAME="${PROJECT_NAME:-"$(basename "$GITHUB_REPOSITORY")"}"
 log_msg "Project Name: ${_PROJECT_NAME}"
 log_msg "Source Dir: ${_SRC_DIR}"
+log_msg "Lang Name: ${LANG_NAME}"
+log_msg "Lang Version: ${LANG_VERSION}"
 if [[ $ACTION = "build" ]]; then
     ls -lh
     restore_dependencies_cache
