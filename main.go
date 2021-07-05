@@ -29,7 +29,7 @@ var templateBaseDir = "templates"
 var alpineVersion = "3.13"
 var dockerRegistryUserID = "ghcr.io/unfor19"
 var dockerImageName = "release-action"
-var dockerfileBaseName = "Dockerfile.base"
+var dockerFileTemplateName = "Dockerfile.base.tpl"
 
 type ErrorLine struct {
 	Error       string      `json:"error"`
@@ -75,7 +75,7 @@ func dockerLogger(rd io.Reader) {
 	jsonmessage.DisplayJSONMessagesStream(rd, os.Stderr, termFd, isTerm, nil)
 }
 
-func dockerImageBuild(dockerClient *client.Client, t *LangTemplate) error {
+func dockerImageBuild(dockerClient *client.Client, t *LangTemplate, dockerFileName string) error {
 
 	langBaseImage := t.LangName + ":" + t.LangVersion + "-" + "alpine" + alpineVersion
 
@@ -90,12 +90,12 @@ func dockerImageBuild(dockerClient *client.Client, t *LangTemplate) error {
 		"LANG_IMAGE":     &langBaseImage,
 		"ALPINE_VERSION": &alpineVersion,
 	}
-	dockerFile := dockerfileBaseName
+
 	cwd, err := os.Getwd()
 	if err != nil {
 		log.Fatalln("Failed to get working dir", err)
 	}
-	dockerfilePath := cwd + "/" + dockerfileBaseName
+	dockerfilePath := cwd + "/" + dockerFileName
 	dockerFileReader, err := os.Open(dockerfilePath)
 	if err != nil {
 		log.Fatal(err, " :unable to open Dockerfile")
@@ -106,7 +106,7 @@ func dockerImageBuild(dockerClient *client.Client, t *LangTemplate) error {
 	}
 
 	tarHeader := &tar.Header{
-		Name: dockerFile,
+		Name: dockerFileName,
 		Size: int64(len(readDockerFile)),
 	}
 	err = tw.WriteHeader(tarHeader)
@@ -125,7 +125,7 @@ func dockerImageBuild(dockerClient *client.Client, t *LangTemplate) error {
 		dockerFileTarReader,
 		types.ImageBuildOptions{
 			Context:    dockerFileTarReader,
-			Dockerfile: dockerFile,
+			Dockerfile: dockerFileName,
 			Remove:     true,
 			Tags:       tags,
 			BuildArgs:  args,
@@ -157,6 +157,29 @@ func dockerImagePush(authConfig types.AuthConfig, dockerClient *client.Client, t
 	return nil
 }
 
+func ParseTplFile(srcFilePath string, outputFilePath string, templateName string, templateInterface interface{}) error {
+	data, err := ioutil.ReadFile(srcFilePath)
+	if err != nil {
+		return err
+	}
+	outputFile, err := os.Create(outputFilePath)
+	outputFile.Chmod(0755)
+	defer outputFile.Close()
+	if err != nil {
+		return err
+	}
+	if strings.HasSuffix(srcFilePath, templateSuffix) {
+		tmpl, _ := template.New(templateName).Parse(string(data))
+		err = tmpl.Execute(outputFile, templateInterface)
+		if err != nil {
+			return err
+		}
+	} else {
+		outputFile.Write([]byte(data))
+	}
+	return nil
+}
+
 func main() {
 	d, err := readTemplate(templateYmlPath)
 	if err != nil {
@@ -179,7 +202,13 @@ func main() {
 				LangVersion:   version,
 				AlpineVersion: alpineVersion,
 			}
-			err = dockerImageBuild(cli, &langTemplate)
+			dockerfileBaseName := strings.ReplaceAll(dockerFileTemplateName, ".tpl", "")
+			err = ParseTplFile(dockerFileTemplateName, dockerfileBaseName, dockerImageName, langTemplate)
+			if err != nil {
+				log.Fatalln("Failed to parse Docker base file", dockerFileTemplateName, err)
+			}
+
+			err = dockerImageBuild(cli, &langTemplate, dockerfileBaseName)
 			if err != nil {
 				log.Fatalln("Failed to build docker image", err)
 			}
@@ -204,35 +233,13 @@ func main() {
 				}
 
 				os.MkdirAll(dirPath, 0755)
-				data, err := ioutil.ReadFile(templateBaseDir + "/" + filePath)
-				if err != nil {
-					log.Fatalln(err)
-				}
-
 				outputFilePath := dirPath + "/" + cleanFileName
-
-				outputFile, err := os.Create(outputFilePath)
-				outputFile.Chmod(0755)
-				defer outputFile.Close()
+				err = ParseTplFile(templateBaseDir+"/"+filePath, outputFilePath, lang.Name+version, LangTemplate{
+					LangName:    lang.Name,
+					LangVersion: version,
+				})
 				if err != nil {
-					log.Fatalln("Error creating output file", err)
-				}
-				if err != nil {
-					log.Fatalln(err)
-				}
-				if strings.HasSuffix(filePath, templateSuffix) {
-					tmpl, _ := template.New(lang.Name + "" + version).Parse(string(data))
-					t := LangTemplate{
-						LangName:    lang.Name,
-						LangVersion: version,
-					}
-
-					err = tmpl.Execute(outputFile, t)
-					if err != nil {
-						log.Fatalln(err)
-					}
-				} else {
-					outputFile.Write([]byte(data))
+					log.Fatalln("Error parsing template file", err)
 				}
 			}
 		}
