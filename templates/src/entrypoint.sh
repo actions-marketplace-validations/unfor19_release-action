@@ -346,17 +346,20 @@ restore_build_cache(){
 }
 
 build_app(){
-    if [[ -z "$_BUILD_SCRIPT_PATH" && "$_BUILD_SCRIPT_PATH" != "false" && -f "$_BUILD_SCRIPT_PATH" ]]; then
-        log_msg "Build With: ${_BUILD_SCRIPT_PATH}"
-        log_msg "Building..."
-        bash "$_BUILD_SCRIPT_PATH"
-    else
-        log_msg "Build With: Default"
-        log_msg "Building..."
-        default_build
-    fi
-    ls -lh
-    log_msg "Finished building app"
+  log_msg "Starting build process ..."
+  log_msg "GOARCH: $GOARCH"  
+  log_msg "GOOS: $GOOS"
+  if [[ -z "$_BUILD_SCRIPT_PATH" && "$_BUILD_SCRIPT_PATH" != "false" && -f "$_BUILD_SCRIPT_PATH" ]]; then
+    log_msg "Build With: ${_BUILD_SCRIPT_PATH}"
+    log_msg "Building..."
+    bash "$_BUILD_SCRIPT_PATH"
+  else
+    log_msg "Build With: Default"
+    log_msg "Building..."
+    default_build
+  fi
+  ls -lh
+  log_msg "Successfully finished building"
 }
 
 cache_dependencies(){
