@@ -31,6 +31,9 @@ inputs:
     description: "GitHub Personal Access token for uploading release assets, defaults to GITHUB_TOKEN"
     default: "false"
     required: false
+outputs:
+  artifact-full-path:
+    description: "Artifact full path"
 
 runs:
   using: "docker"

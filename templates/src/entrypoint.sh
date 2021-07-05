@@ -119,11 +119,18 @@ gh_upload_asset(){
     "$target_url" | jq
 }
 
+set_github_actions_output(){
+  local name="$1"
+  local value="$2"
+  echo "::set-output name=${name}::${value}"
+}
 
 default_build(){
   local project_root="/usr/local/go/src/${_PROJECT_NAME}"
   local file_extenstion=""
   local artifact_name="${_PROJECT_NAME}"
+  local artifact_fullname=""
+  local artifact_full_path=""
   mkdir -p "$project_root"
   rmdir "$project_root"
   ln -s "$GITHUB_WORKSPACE" "$project_root"
@@ -135,7 +142,11 @@ default_build(){
     file_extenstion='.exe'
   fi
 
-  go build -o "${artifact_name}${file_extenstion}"
+  artifact_fullname="${artifact_name}${file_extenstion}"
+  go build -o "$artifact_fullname"
+  artifact_fullpath="$(find "$PWD" -mindepth 1 -maxdepth 1 -type f -name "$artifact_fullname")"
+  ls -lh "$artifact_fullpath"
+  set_github_actions_output "artifact-full-path" "$artifact_full_path"
 }
 
 
