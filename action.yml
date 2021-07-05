@@ -1,0 +1,52 @@
+name: "release-action"
+branding:
+  icon: "align-justify"
+  color: "white"
+description: "Build and Release application in GitHub's ecosystem"
+inputs:
+  action:
+    description: "dependencies, build, test, release"
+    required: true
+  src-dir:
+    description: "If the main.go file is in a sub-directory"
+    default: "."
+    required: false
+  project-name:
+    description: "If the output file name is different from the GitHub repo name"
+    default: ""
+    required: false
+  build-script-path:
+    description: "Path of the script to execute in the build action"
+    default: "false"
+    required: false
+  test-results-path:
+    description: Test results output file path
+    default: ""
+    required: false
+  test-err-on-fail:
+    description: Will exit with error if test step fails
+    default: "true"
+    required: false
+  gh-token:
+    description: "GitHub Personal Access token for uploading release assets, defaults to GITHUB_TOKEN"
+    default: "false"
+    required: false
+
+runs:
+  using: "docker"
+  image: Dockerfile
+  args:
+    - --action
+    - "${{ inputs.action }}"
+    - --src_dir
+    - "${{ inputs.src-dir }}"
+    - --project_name
+    - "${{ inputs.project-name }}"
+    - --gh_token
+    - "${{ inputs.gh-token }}"
+    - --build_script_path
+    - "${{ inputs.build-script-path }}"
+    - --test_results_path
+    - "${{ inputs.test-results-path }}"
+    - --test_err_on_fail
+    - "${{ inputs.test-err-on-fail }}"
