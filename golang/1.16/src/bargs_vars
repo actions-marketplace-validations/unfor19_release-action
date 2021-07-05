@@ -23,6 +23,11 @@ short=trp
 description=Test results output file path
 default="${GITHUB_WORKSPACE}/test_report.html"
 ---
+name=test_err_on_fail
+short=teof
+description=Will exit with error if test step fails
+default=true
+---
 name=gh_token
 short=gt
 description=GitHub Personal Access token for uploading release assets

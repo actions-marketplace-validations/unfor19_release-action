@@ -400,6 +400,7 @@ _OVERWRITE_RELEASE="${OVERWRITE_RELEASE:-""}"
 _GH_TOKEN="${GH_TOKEN:-""}"
 _BUILD_SCRIPT_PATH="${BUILD_SCRIPT_PATH:-"false"}"
 _TEST_RESULTS_PATH="${TEST_RESULTS_PATH:-"${GITHUB_WORKSPACE}/test_report.html"}"
+_TEST_ERR_ON_FAIL="${TEST_ERR_ON_FAIL:-"true"}"
 
 log_msg "Running as $(whoami)"
 _SRC_DIR="${SRC_DIR:-""}"
@@ -437,13 +438,16 @@ elif [[ $ACTION = "test" ]]; then
       log_msg "Failed: ${_NUM_FAILED_TESTS}"
       _NUM_TOTAL_TESTS="$((_NUM_PASSED_TESTS+_NUM_SKIPPED_TESTS+_NUM_FAILED_TESTS))"
       log_msg "Total: ${_NUM_TOTAL_TESTS}"
-      if [[ "$_NUM_FAILED_TESTS" -eq 0 ]]; then
-        log_msg "Successfully passed all tests"
-      elif [[ "$_NUM_FAILED_TESTS" -gt 0 ]]; then
-        _FAIL_ERROR_MSG="Failed tests: $_NUM_FAILED_TESTS"
-      else
-        _FAIL_ERROR_MSG="Unknown number of failed tests: $_NUM_FAILED_TESTS"
+      if [[ "$_TEST_ERR_ON_FAIL" = "true" ]]; then
+        if [[ "$_NUM_FAILED_TESTS" -eq 0 ]]; then
+          log_msg "Successfully passed all tests"
+        elif [[ "$_NUM_FAILED_TESTS" -gt 0 ]]; then
+          _FAIL_ERROR_MSG="Failed tests: $_NUM_FAILED_TESTS"
+        else
+          _FAIL_ERROR_MSG="Unknown number of failed tests: $_NUM_FAILED_TESTS"
+        fi
       fi
+
       cache_build
     fi
     log_msg "Finished testing"
