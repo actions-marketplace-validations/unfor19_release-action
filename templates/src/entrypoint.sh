@@ -135,7 +135,7 @@ default_build(){
     file_extenstion='.exe'
   fi
 
-  go build ./... -o "${artifact_name}${file_extenstion}"
+  go build -o "${artifact_name}${file_extenstion}"
 }
 
 
