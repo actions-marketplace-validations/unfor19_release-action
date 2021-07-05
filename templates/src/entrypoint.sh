@@ -429,15 +429,22 @@ elif [[ $ACTION = "test" ]]; then
       go test ./... -json | go-test-report -o "${_TEST_RESULTS_PATH}"
       log_msg "Test results"
       ls -lh "${_TEST_RESULTS_PATH}"
-      cache_build
+      _NUM_PASSED_TESTS="$(grep 'Passed: <strong>[0-9]*</strong>' test_report.html | tr -d "<strong>" | tr -d / | rev | cut -d" " -f1 | rev)"
+      _NUM_SKIPPED_TESTS="$(grep 'Skipped: <strong>[0-9]*</strong>' test_report.html | tr -d "<strong>" | tr -d / | rev | cut -d" " -f1 | rev)"
       _NUM_FAILED_TESTS="$(grep 'Failed: <strong>[0-9]*</strong>' test_report.html | tr -d "<strong>" | tr -d / | rev | cut -d" " -f1 | rev)"
+      log_msg "Passed: ${_NUM_PASSED_TESTS}"
+      log_msg "Skipped: ${_NUM_SKIPPED_TESTS}"
+      log_msg "Failed: ${_NUM_FAILED_TESTS}"
+      _NUM_TOTAL_TESTS="$((_NUM_PASSED_TESTS+_NUM_SKIPPED_TESTS+_NUM_FAILED_TESTS))"
+      log_msg "Total: ${_NUM_TOTAL_TESTS}"
       if [[ "$_NUM_FAILED_TESTS" -eq 0 ]]; then
         log_msg "Successfully passed all tests"
       elif [[ "$_NUM_FAILED_TESTS" -gt 0 ]]; then
-        error_msg "Failed tests: $_NUM_FAILED_TESTS"
+        _FAIL_ERROR_MSG="Failed tests: $_NUM_FAILED_TESTS"
       else
-        error_msg "Unknown number of failed tests: $_NUM_FAILED_TESTS"
+        _FAIL_ERROR_MSG="Unknown number of failed tests: $_NUM_FAILED_TESTS"
       fi
+      cache_build
     fi
     log_msg "Finished testing"
 elif [[ $ACTION = "dependencies" ]]; then
@@ -459,4 +466,9 @@ else
     error_msg "Unknown action"
 fi
 
-log_msg "Successfully completed $ACTION step"
+
+if [[ -z "$_FAIL_ERROR_MSG" ]]; then
+  log_msg "Successfully completed $ACTION step"
+else
+  error_msg "$_FAIL_ERROR_MSG"
+fi
