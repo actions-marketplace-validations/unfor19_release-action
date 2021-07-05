@@ -2,7 +2,7 @@ name: "release-action"
 branding:
   icon: "align-justify"
   color: "white"
-description: "Build and Release application in GitHub's ecosystem"
+description: "Build and Release in GitHub's ecosystem"
 inputs:
   action:
     description: "dependencies, build, test, release"
