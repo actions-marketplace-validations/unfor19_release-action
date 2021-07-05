@@ -121,7 +121,7 @@ gh_upload_asset(){
 
 
 default_build(){
-  local project_root="/usr/local/go/src/github.com/${GITHUB_REPOSITORY}"
+  local project_root="/usr/local/go/src/${_PROJECT_NAME}"
   local file_extenstion=""
   local artifact_name="${_PROJECT_NAME}"
   mkdir -p "$project_root"
