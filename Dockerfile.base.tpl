@@ -30,6 +30,13 @@ ARG CURL_VERSION
 RUN wget -q -O ./binaries/curl "https://github.com/moparisthebest/static-curl/releases/download/v${CURL_VERSION}/curl-amd64"
 ARG JQ_VERSION
 RUN wget -q -O ./binaries/jq "https://github.com/stedolan/jq/releases/download/jq-${JQ_VERSION}/jq-linux64"
+
+{{- if eq .LangName "golang" }}
+RUN wget -q -O ./go-test-report.tgz "https://github.com/vakenbolt/go-test-report/releases/download/v0.9.3/go-test-report-linux-v0.9.3.tgz" && \
+    tar -xzf ./go-test-report.tgz && \
+    mv go-test-report ./binaries/go-test-report && \
+    rm  go-test-report*
+{{- end }}
 # Output binaries: /tmp/downloads/
 
 
@@ -61,10 +68,3 @@ RUN apk --update add \
     rm -rf /var/lib/apt/lists/* && \
     rm /var/cache/apk/*
 WORKDIR /code/
-{{- if eq .LangName "golang" }}
-RUN wget -O /tmp/go-test-report.tgz "https://github.com/vakenbolt/go-test-report/releases/download/v0.9.3/go-test-report-linux-v0.9.3.tgz" && \
-    tar -xzf /tmp/go-test-report.tgz && \
-    mv go-test-report /usr/local/bin/go-test-report && \
-    chmod +x /usr/local/bin/go-test-report && \
-    rm  go-test-report*
-{{- end }}
