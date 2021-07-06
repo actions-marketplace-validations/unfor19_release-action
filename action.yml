@@ -32,6 +32,8 @@ inputs:
     default: "false"
     required: false
 outputs:
+  artifact-name:
+    description: "Artifact name"
   artifact-full-path:
     description: "Artifact full path"
 
