@@ -122,6 +122,7 @@ gh_upload_asset(){
 set_github_actions_output(){
   local name="$1"
   local value="$2"
+  log_msg "Setting GitHub Actions Output: ${name}=${value}"
   echo "::set-output name=${name}::${value}"
 }
 
@@ -130,7 +131,6 @@ default_build(){
   local file_extenstion=""
   local artifact_name="${_PROJECT_NAME}"
   local artifact_fullname=""
-  local artifact_full_path=""
   mkdir -p "$project_root"
   rmdir "$project_root"
   ln -s "$GITHUB_WORKSPACE" "$project_root"
@@ -144,9 +144,8 @@ default_build(){
 
   artifact_fullname="${artifact_name}${file_extenstion}"
   go build -o "$artifact_fullname"
-  artifact_full_path="$(find "$PWD" -mindepth 1 -maxdepth 1 -type f -name "$artifact_fullname")"
-  ls -lh "$artifact_full_path"
-  set_github_actions_output "artifact-full-path" "$artifact_full_path"
+  ls -lh "${GITHUB_WORKSPACE}/$artifact_fullname"
+  set_github_actions_output "artifact-full-path" "${GITHUB_WORKSPACE}/$artifact_fullname"
   set_github_actions_output "artifact-name" "$artifact_fullname"
 }
 
