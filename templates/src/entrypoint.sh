@@ -146,7 +146,7 @@ default_build(){
   go build -o "$artifact_fullname"
   ls -lh "${GITHUB_WORKSPACE}/${_SRC_DIR}/$artifact_fullname"
   set_github_actions_output "artifact-full-path" "${_SRC_DIR}/${artifact_fullname}"
-  set_github_actions_output "artifact-name" "${GOOS}-${GOARCH}-${artifact_fullname}"
+  set_github_actions_output "artifact-name" "${GOOS}-${GOARCH}-${artifact_name}"
 }
 
 
