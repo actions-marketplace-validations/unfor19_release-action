@@ -144,7 +144,7 @@ default_build(){
 
   artifact_fullname="${artifact_name}${file_extenstion}"
   go build -o "$artifact_fullname"
-  ls -lh "${GITHUB_WORKSPACE}/$artifact_fullname"
+  ls -lh "${GITHUB_WORKSPACE}/${_SRC_DIR}/$artifact_fullname"
   set_github_actions_output "artifact-full-path" "${GITHUB_WORKSPACE}/${_SRC_DIR}/$artifact_fullname"
   set_github_actions_output "artifact-name" "$artifact_fullname"
 }
