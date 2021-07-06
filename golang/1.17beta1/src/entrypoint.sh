@@ -417,6 +417,7 @@ _GH_TOKEN="${GH_TOKEN:-""}"
 _BUILD_SCRIPT_PATH="${BUILD_SCRIPT_PATH:-"false"}"
 _TEST_RESULTS_PATH="${TEST_RESULTS_PATH:-"${GITHUB_WORKSPACE}/test_report.html"}"
 _TEST_ERR_ON_FAIL="${TEST_ERR_ON_FAIL:-"true"}"
+_TEST_ERR_LOG_PATH="${TEST_ERR_LOG_PATH:-".test_err.log"}"
 
 log_msg "Running as $(whoami)"
 _SRC_DIR="${SRC_DIR:-""}"
@@ -446,7 +447,12 @@ elif [[ $ACTION = "test" ]]; then
       restore_build_cache
       unset GOOS GOARCH # Avoids errors on arm64 builds
       log_msg "Testing..."
-      go test ./... -json | go-test-report -o "${_TEST_RESULTS_PATH}"
+      go test ./... -json | go-test-report -o "${_TEST_RESULTS_PATH}" 2>"$_TEST_ERR_LOG_PATH"
+      if [[ "$(wc -c < "$TEST_ERR_LOG")" -ne 0 ]]; then
+        log_msg "Tests error log:"
+        cat "$_TEST_ERR_LOG_PATH"
+        error_msg "Failed to run tests, terminating ..."
+      fi
       log_msg "Test results"
       ls -lh "${_TEST_RESULTS_PATH}"
       _NUM_PASSED_TESTS="$(get_test_result_num "Passed")"
