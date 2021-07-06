@@ -147,6 +147,7 @@ default_build(){
   artifact_full_path="$(find "$PWD" -mindepth 1 -maxdepth 1 -type f -name "$artifact_fullname")"
   ls -lh "$artifact_full_path"
   set_github_actions_output "artifact-full-path" "$artifact_full_path"
+  set_github_actions_output "artifact-name" "$artifact_fullname"
 }
 
 
