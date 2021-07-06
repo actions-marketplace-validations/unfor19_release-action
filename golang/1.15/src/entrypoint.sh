@@ -435,7 +435,8 @@ elif [[ $ACTION = "test" ]]; then
     [[ "$_SRC_DIR" ]] && cd "$_SRC_DIR"
     ls -lh
     log_msg "Checking for *_test.go files ..."
-    _TEST_FILES="$(find . -type f -name "*_test.go")"
+    _TEST_FILES="$(find . -type f \( -name "*_test.go" \) \
+      -and \( -not -path "./.cache*" \))"
     if [[ -z "$_TEST_FILES" ]]; then
       log_msg "No *_test.go files in this repo, skipping tests"
     else
