@@ -68,6 +68,13 @@ gh_upload_asset(){
   local asset_type="${1:-""}"
   local asset_data="${2:-""}"
   local name_suffix="${3:-""}"
+  local release_artifact_name="${4:-""}"
+  local release_assets="${5:-""}"
+  local upload_url="${6:-""}"
+  local bearer_token="${7:-"$BEARER_TOKEN"}"
+  local connect_timeout="${CONNECT_TIMEOUT:-"30"}"
+  local connect_retry="${CONNECT_RETRY:-"3"}"
+  local retry_delay="${RETRY_DELAY:-"20"}"
   local content_type=""
   local target_url=""
   local asset_name=""
@@ -75,16 +82,16 @@ gh_upload_asset(){
   declare -a data_flag
   log_msg "Asset type: ${asset_type}"
   if [[ "$asset_type" = "txt" ]]; then
-    asset_name="${_RELEASE_ARTIFACT_NAME}_${name_suffix}"
+    asset_name="${release_artifact_name}${name_suffix}"
     content_type="text/plain"
     data_flag=("--data" " ")
   elif [[ "$asset_type" = "binary" ]]; then
-    asset_name="${_RELEASE_ARTIFACT_NAME}"
+    asset_name="${release_artifact_name}"
     content_type="application/octet-stream"
     data_flag=("--data-binary" "@")
   fi
 
-  target_delete_asset_url="$(echo "$_RELEASE_ASSETS" | jq -rc '.[] | select(.name=="'"${asset_name}"'") | .url')"  
+  target_delete_asset_url="$(echo "$release_assets" | jq -rc '.[] | select(.name=="'"${asset_name}"'") | .url')"  
 
   log_msg "Asset name: ${asset_name}"
   log_msg "Checking if asset already exists ..."
@@ -92,30 +99,30 @@ gh_upload_asset(){
     log_msg "Deleting asset - ${target_delete_asset_url}"
     curl \
       --fail \
-      --connect-timeout "$_CONNECT_TIMEOUT" \
+      --connect-timeout "$connect_timeout" \
       --retry-all-errors \
-      --retry "$_CONNECT_RETRY" \
-      --retry-delay "$_RETRY_DELAY" \
+      --retry "$connect_retry" \
+      --retry-delay "$retry_delay" \
       -X "DELETE" \
       -H "Accept: application/vnd.github.v3+json" \
-      -H "Authorization: Bearer ${_GH_TOKEN}" \
+      -H "Authorization: Bearer ${bearer_token}" \
       "$target_delete_asset_url" | jq
   fi
 
   log_msg "Asset will be created with POST"
-  target_url="${_UPLOAD_URL}?name=${asset_name}"
+  target_url="${upload_url}?name=${asset_name}"
   log_msg "Target URL for upload: $target_url"
   log_msg "-X POST ${data_flag[*]}${asset_data} -H Content-Type: ${content_type} -H Authorization: Bearer HIDDEN"
   curl \
     --fail \
-    --connect-timeout "$_CONNECT_TIMEOUT" \
+    --connect-timeout "$connect_timeout" \
     --retry-all-errors \
-    --retry "$_CONNECT_RETRY" \
-    --retry-delay "$_RETRY_DELAY" \
+    --retry "$connect_retry" \
+    --retry-delay "$retry_delay" \
     -X "POST" ${data_flag[*]}"${asset_data}" \
     -H "Content-Type: ${content_type}" \
     -H "Accept: application/vnd.github.v3+json" \
-    -H "Authorization: Bearer ${_GH_TOKEN}" \
+    -H "Authorization: Bearer ${bearer_token}" \
     "$target_url" | jq
 }
 
@@ -314,16 +321,16 @@ gh_release(){
     log_msg "sha256sum - $_CHECKSUM_SHA256"
 
     log_msg "Uploading artifact - $_ARTIFACT_PATH"
-    gh_upload_asset "binary" "$_ARTIFACT_PATH"
+    gh_upload_asset "binary" "$_ARTIFACT_PATH" "" "$_RELEASE_ARTIFACT_NAME" "$_RELEASE_ASSETS" "$_UPLOAD_URL" "$_GH_TOKEN"
 
     if [[ "$_PUBILSH_CHECKSUM_SHA256" = "true" ]]; then
         log_msg "Uploading SHA256 checksum ..."
-        gh_upload_asset "txt" "$_CHECKSUM_SHA256" "sha256.txt"
+        gh_upload_asset "txt" "$_CHECKSUM_SHA256" "_sha256.txt" "$_RELEASE_ARTIFACT_NAME" "$_RELEASE_ASSETS" "$_UPLOAD_URL" "$_GH_TOKEN"
     fi
 
     if [[ "$_PUBILSH_CHECKSUM_MD5" = "true" ]]; then
         log_msg "Uploading MD5 checksum ..."
-        gh_upload_asset "txt" "$_CHECKSUM_MD5" "md5.txt"
+        gh_upload_asset "txt" "$_CHECKSUM_MD5" "_md5.txt" "$_RELEASE_ARTIFACT_NAME" "$_RELEASE_ASSETS" "$_UPLOAD_URL" "$_GH_TOKEN"
     fi
 }
 
