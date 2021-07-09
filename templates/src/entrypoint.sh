@@ -160,10 +160,14 @@ default_build(){
 sync_commit_tag(){
   local tag_name="$1"
   local github_repository="$2"
+  local bearer_token="${3:-"$BEARER_TOKEN"}"
   local current_sha=""
   local response=""
   local github_ref=""
   local future_sha=""
+  local connect_timeout="${CONNECT_TIMEOUT:-"30"}"
+  local connect_retry="${CONNECT_RETRY:-"3"}"
+  local retry_delay="${RETRY_DELAY:-"20"}"  
   future_sha="$(git rev-parse HEAD)"
   github_ref="refs/tags/${tag_name}"
   log_msg "Syncing release tag and current commit ..."
@@ -171,13 +175,13 @@ sync_commit_tag(){
   log_msg "Checking if it's necessary to sync ..."
   response="$(curl \
     --fail \
-    --connect-timeout "$_CONNECT_TIMEOUT" \
+    --connect-timeout "$connect_timeout" \
     --retry-all-errors \
-    --retry "$_CONNECT_RETRY" \
-    --retry-delay "$_RETRY_DELAY" \
+    --retry "$connect_retry" \
+    --retry-delay "$retry_delay" \
     -X "GET" \
     -H "Accept: application/vnd.github.v3+json" \
-    -H "Authorization: Bearer ${_GH_TOKEN}" \
+    -H "Authorization: Bearer ${bearer_token}" \
     -H "Content-Type: application/json" \
     "https://api.github.com/repos/${github_repository}/git/${github_ref}" | jq)"
   current_sha="$(echo "$response" | jq -cr '.object.sha')"
@@ -187,13 +191,13 @@ sync_commit_tag(){
     log_msg "Replacing ${current_sha} tag ${tag_name} with ${future_sha}"
     curl \
       --fail \
-      --connect-timeout "$_CONNECT_TIMEOUT" \
+      --connect-timeout "$connect_timeout" \
       --retry-all-errors \
-      --retry "$_CONNECT_RETRY" \
-      --retry-delay "$_RETRY_DELAY" \
+      --retry "$connect_retry" \
+      --retry-delay "$retry_delay" \
       -X "PATCH" \
       -H "Accept: application/vnd.github.v3+json" \
-      -H "Authorization: Bearer ${_GH_TOKEN}" \
+      -H "Authorization: Bearer ${bearer_token}" \
       -H "Content-Type: application/json" \
       -d '{"sha":"'"$future_sha"'","force": true}' \
       "https://api.github.com/repos/${github_repository}/git/${github_ref}" | jq
@@ -269,7 +273,7 @@ gh_release(){
 
     version_validation "$RELEASE_NAME"
 
-    sync_commit_tag "$RELEASE_NAME" "$GITHUB_REPOSITORY"
+    sync_commit_tag "$RELEASE_NAME" "$GITHUB_REPOSITORY" "$_GH_TOKEN"
 
     _PUBILSH_CHECKSUM_SHA256="${PUBILSH_CHECKSUM_SHA256:-"true"}"
     _PUBILSH_CHECKSUM_MD5="${PUBILSH_CHECKSUM_MD5:-"false"}"
@@ -420,7 +424,9 @@ _CONNECT_TIMEOUT="${CONNECT_TIMEOUT:-"30"}"
 _CONNECT_RETRY="${_CONNECT_RETRY:-"3"}"
 _RETRY_DELAY="${RETRY_DELAY:-"20"}"
 _OVERWRITE_RELEASE="${OVERWRITE_RELEASE:-""}"
-_GH_TOKEN="${GH_TOKEN:-""}"
+_GH_TOKEN="${BEARER_TOKEN:-$GH_TOKEN}"
+_GH_TOKEN="${_GH_TOKEN:-$GITHUB_TOKEN}"
+_GH_TOKEN="${_GH_TOKEN:-""}"
 _BUILD_SCRIPT_PATH="${BUILD_SCRIPT_PATH:-"false"}"
 _TEST_RESULTS_PATH="${TEST_RESULTS_PATH:-"${GITHUB_WORKSPACE}/test_report.html"}"
 _TEST_ERR_ON_FAIL="${TEST_ERR_ON_FAIL:-"true"}"
